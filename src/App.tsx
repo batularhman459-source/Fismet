@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import FeaturesWithPanel from "@/components/ui/features-with-panel";
 import HalftoneWordmarkFooter from "@/components/ui/halftone-wordmark-footer";
 import { FISMET_LOADER_TUNING, FismetGlassReveal } from "@/components/ui/liquid-glass-logo-reveal";
-import { ParallaxComponent } from "@/components/ui/parallax-scrolling";
+import { DEFAULT_LAYERS, ParallaxComponent } from "@/components/ui/parallax-scrolling";
 import StackSpread from "@/components/ui/stack-spread";
 import { Component as KineticNavigation } from "@/components/ui/sterling-gate-kinetic-navigation";
 import { setScrollLocked } from "@/lib/scroll-lock";
@@ -80,7 +80,13 @@ export default function App() {
         animate={loading ? {} : { scale: 1, filter: "blur(0px)" }}
         transition={{ duration: 1.2, ease: EASE }}
       >
-        <ParallaxComponent id="studio" title="Fismet" ready={!loading}>
+        {/* Vordere Ebene (mit der Person) weggelassen */}
+        <ParallaxComponent
+          id="studio"
+          title="Fismet"
+          ready={!loading}
+          layers={{ back: DEFAULT_LAYERS.back, middle: DEFAULT_LAYERS.middle }}
+        >
           <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
             <motion.img
               src={LOGO_MARK}

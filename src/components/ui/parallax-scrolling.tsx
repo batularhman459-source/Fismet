@@ -8,8 +8,8 @@ import { registerLenis } from "@/lib/scroll-lock";
 
 export interface ParallaxComponentProps {
   title?: string;
-  /** Bild-Ebenen von hinten nach vorne: 1 und 2 hinter dem Titel, 4 davor */
-  layers?: { back: string; middle: string; front: string };
+  /** Bild-Ebenen von hinten nach vorne: back und middle hinter dem Titel, front davor (optional) */
+  layers?: { back: string; middle: string; front?: string };
   /** Inhalt des zweiten Bildschirms unter dem Parallax-Header */
   children?: React.ReactNode;
   /** Weiches Scrollen (Lenis) für die ganze Seite einschalten */
@@ -19,7 +19,7 @@ export interface ParallaxComponentProps {
   id?: string;
 }
 
-const DEFAULT_LAYERS = {
+export const DEFAULT_LAYERS = {
   back: "https://cdn.21st.dev/assets/mirror/a4/a43f4eae3459c461345ee676f12d6e1ddca65e8a5279a5af00d475b17ff83aea.webp",
   middle: "https://cdn.21st.dev/assets/mirror/50/50ca6a0d36d2780bfcb469d6db7eaec0be7e0d2961ba69a63d2a1473b040338d.webp",
   front: "https://cdn.21st.dev/assets/mirror/e1/e1c8137b5f971c3b3ec1a0f9e79b9c17018767005f844a10082b890472afecfb.webp",
@@ -142,7 +142,9 @@ export function ParallaxComponent({
                 <sup>*</sup>
               </h1>
             </div>
-            <img src={layers.front} loading="eager" width="800" data-parallax-layer="4" alt="" className="parallax__layer-img" />
+            {layers.front ? (
+              <img src={layers.front} loading="eager" width="800" data-parallax-layer="4" alt="" className="parallax__layer-img" />
+            ) : null}
           </div>
           <div className="parallax__fade"></div>
         </div>
