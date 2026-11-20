@@ -1,9 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import FeaturesWithPanel from "@/components/ui/features-with-panel";
 import HalftoneWordmarkFooter from "@/components/ui/halftone-wordmark-footer";
 import { FismetGlassReveal, glassRevealDuration } from "@/components/ui/liquid-glass-logo-reveal";
 import { PrismaHero } from "@/components/ui/prisma-hero";
-import { WarpCarousel } from "@/components/ui/warp-carousel";
+import StackSpread from "@/components/ui/stack-spread";
 
 const EASE = [0.76, 0, 0.24, 1] as const;
 
@@ -56,20 +57,11 @@ export default function App() {
         <PrismaHero ready={!loading} />
       </motion.div>
 
-      <section id="leistungen" className="px-2 pb-2 pt-24 md:px-3 md:pt-32">
-        <div className="mb-10 grid gap-6 px-2 md:mb-14 md:grid-cols-12 md:px-7">
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-primary/50 md:col-span-3">Fismet in Zahlen</p>
-          <h2 className="text-4xl font-medium leading-[0.95] tracking-[-0.04em] text-primary sm:text-6xl md:col-span-9">
-            Schnell, mobil, sauber gebaut
-            <span className="text-primary/40"> – Websites, die liefern.</span>
-          </h2>
-        </div>
-        <div id="projekte" className="h-[80svh] min-h-[460px] overflow-hidden rounded-2xl md:h-[100svh] md:rounded-[2rem]">
-          <WarpCarousel background="#0b0b0a" ariaLabel="Fismet in Zahlen" style={{ width: "100%", height: "100%" }} />
-        </div>
-      </section>
+      <StackSpread />
 
-      <div id="team" className="mt-24 md:mt-32">
+      <FeaturesWithPanel id="leistungen" />
+
+      <div id="team" className="mt-8 md:mt-16">
         <HalftoneWordmarkFooter
           id="kontakt"
           wordmark="fismet"
@@ -77,6 +69,8 @@ export default function App() {
           meta="© 2026 · Pierre & Abderrahman"
           palette={{ background: "#0b0b0a", ink: "#e1e0cc", warm: "#e9762b" }}
           backToTopLabel="Nach oben ↑"
+          radius={115}
+          drag={0.75}
           columns={[
             {
               title: "Studio",

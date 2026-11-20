@@ -52,6 +52,8 @@ export interface HalftoneWordmarkFooterProps {
   dotGap?: number
   /** How far the pointer pushes, in CSS px. Defaults to 80. */
   radius?: number
+  /** How strongly dots are dragged along with the pointer's movement (trails), 0–2. Defaults to 0. */
+  drag?: number
   /** How much of the word's cap height hangs below the bottom edge, 0–0.6. Defaults to 0.2. */
   crop?: number
   /** Print grain over everything, 0–1. Defaults to 0.5. */
@@ -188,6 +190,7 @@ export default function HalftoneWordmarkFooter({
   palette,
   dotGap = 6,
   radius = 80,
+  drag = 0,
   crop = 0.2,
   grain = 0.5,
   interactive = true,
@@ -201,8 +204,8 @@ export default function HalftoneWordmarkFooter({
   const colors = { ...(PRESETS[preset] || PRESETS.night), ...(palette || {}) }
   const rootRef = React.useRef(null as HTMLElement | null)
   const canvasRef = React.useRef(null as HTMLCanvasElement | null)
-  const opts = React.useRef({ colors, dotGap, radius, crop, grain, interactive, fontFamily, fontWeight, wordmark })
-  opts.current = { colors, dotGap, radius, crop, grain, interactive, fontFamily, fontWeight, wordmark }
+  const opts = React.useRef({ colors, dotGap, radius, drag, crop, grain, interactive, fontFamily, fontWeight, wordmark })
+  opts.current = { colors, dotGap, radius, drag, crop, grain, interactive, fontFamily, fontWeight, wordmark }
   const key = [wordmark, dotGap, crop, grain, fontFamily, fontWeight, colors.background, colors.ink, colors.warm].join("|")
 
   React.useEffect(() => {
@@ -218,6 +221,9 @@ export default function HalftoneWordmarkFooter({
     let dpr = 1
     let px = -1e5
     let py = -1e5
+    // pointer velocity (px per frame), decays every frame
+    let pvx = 0
+    let pvy = 0
     let raf = 0
     let visible = true
     let awake = true
@@ -308,6 +314,7 @@ export default function HalftoneWordmarkFooter({
       const r = o.interactive && !reduced ? Math.max(0, o.radius) : 0
       const ringAge = ring.t < 0 ? 1e9 : now - ring.t
       const ringR = ringAge * 0.9
+      const dragK = Math.max(0, o.drag) * 0.18
       let moving = false
       for (let i = 0; i < count; i++) {
         const j = i * 7
@@ -327,6 +334,16 @@ export default function HalftoneWordmarkFooter({
               const f = band * 3.2 * (1 - ringAge / 900)
               vx += (dx / d) * f
               vy += (dy / d) * f
+            }
+          }
+          if (dragK > 0 && r > 0) {
+            const ddx = x - px
+            const ddy = y - py
+            const d2 = ddx * ddx + ddy * ddy
+            if (d2 < r * r) {
+              const fall = 1 - Math.sqrt(d2) / r
+              vx += pvx * dragK * fall
+              vy += pvy * dragK * fall
             }
           }
           const s = hwfStep(x, y, vx, vy, hx, hy, px, py, r)
@@ -370,6 +387,8 @@ export default function HalftoneWordmarkFooter({
         ctx.globalAlpha = 1
         ctx.globalCompositeOperation = "source-over"
       }
+      pvx *= 0.8
+      pvy *= 0.8
       // Sleep once everything is home and nothing is pushing.
       awake = moving || ringAge < 900 || px > -1e4
     }
@@ -392,6 +411,11 @@ export default function HalftoneWordmarkFooter({
     const onMove = (e: PointerEv) => {
       if (!opts.current.interactive) return
       const p = toLocal(e)
+      if (px > -1e4) {
+        // clamp so a jump onto the footer doesn't fling everything
+        pvx = Math.max(-60, Math.min(60, pvx * 0.5 + (p[0] - px)))
+        pvy = Math.max(-60, Math.min(60, pvy * 0.5 + (p[1] - py)))
+      }
       px = p[0]
       py = p[1]
       wake()
@@ -399,6 +423,8 @@ export default function HalftoneWordmarkFooter({
     const onLeave = () => {
       px = -1e5
       py = -1e5
+      pvx = 0
+      pvy = 0
       wake()
     }
     const onDown = (e: PointerEv) => {
