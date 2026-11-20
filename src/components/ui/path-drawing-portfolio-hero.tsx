@@ -33,6 +33,8 @@ type SvgPathDrawingTextAnimationProps = {
   fillAfterDraw?: boolean;
   /** Seconds the fill takes to fade in */
   fillDurationSec?: number;
+  /** Füllfarbe nach dem Zeichnen (Standard: derselbe Verlauf wie die Linie) */
+  fillColor?: string;
   /** Animation erst starten, wenn true */
   play?: boolean;
   /** viewBox eng an den Text anpassen (Größe kommt dann vom Container) */
@@ -153,6 +155,7 @@ export function SvgPathDrawingTextAnimation({
   letterSpacing = "0.02em",
   fillAfterDraw = false,
   fillDurationSec = 0.9,
+  fillColor,
   play = true,
   fitToText = false,
   respectReducedMotion = true,
@@ -281,7 +284,7 @@ export function SvgPathDrawingTextAnimation({
           y={viewBoxHeight / 2}
           textAnchor="middle"
           dominantBaseline="middle"
-          fill={`url(#${gradientId})`}
+          fill={fillColor ?? `url(#${gradientId})`}
           fillOpacity={showFill ? 1 : 0}
           strokeOpacity={showFill ? 0 : 1}
           stroke={`url(#${gradientId})`}

@@ -102,8 +102,9 @@ export default function App() {
               letterSpacing="-0.065em"
               fontSize={200}
               strokeWidth={2.5}
-              durationSec={2.4}
-              fillDurationSec={1}
+              fillColor="#ffffff"
+              durationSec={1.2}
+              fillDurationSec={0.5}
               respectReducedMotion={false}
             />
           }
@@ -152,7 +153,7 @@ export default function App() {
         </ParallaxComponent>
       </motion.div>
 
-      <StackSpread />
+      <StackSpread bgColor="#ffffff" />
 
       <FeaturesWithPanel id="leistungen" />
 
