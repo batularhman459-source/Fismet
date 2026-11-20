@@ -125,7 +125,7 @@ export default function FeaturesWithPanel({
                   className={cn(
                     "flex flex-col px-4 py-3.5 rounded-xl cursor-pointer transition-all duration-200 lg:flex-row lg:items-center lg:gap-4",
                     active === index
-                      ? "ring-1 ring-foreground"
+                      ? "ring-1 ring-accent/70 bg-accent/5"
                       : "ring-1 ring-transparent",
                   )}
                 >
@@ -134,7 +134,7 @@ export default function FeaturesWithPanel({
                       className={cn(
                         "size-7 rounded-full flex items-center justify-center text-xs font-medium shrink-0 transition-colors duration-200",
                         active === index
-                          ? "bg-foreground text-background"
+                          ? "bg-accent text-white"
                           : "bg-muted text-muted-foreground",
                       )}
                     >

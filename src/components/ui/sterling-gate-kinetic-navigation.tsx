@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { setScrollLocked } from "@/lib/scroll-lock";
 import { CustomEase } from "gsap/CustomEase";
 
 // Register GSAP Plugins safely
@@ -42,7 +43,7 @@ const NAV_CSS = `
 .sg-nav {
   --sg-ink: #0b0b0a;
   --sg-cream: #e1e0cc;
-  --sg-warm: #e9762b;
+  --sg-accent: #1c57e1;
   --sg-container-padding: clamp(1rem, 2.6vw, 2.25rem);
   --sg-cubic: cubic-bezier(0.65, 0.05, 0, 1);
 }
@@ -54,10 +55,10 @@ const NAV_CSS = `
   color: var(--sg-cream);
   transition: opacity .6s ease, transform .6s var(--sg-cubic);
 }
-/* Menü-Button links: mix-blend-difference hält ihn auf hellen und dunklen Sektionen lesbar */
-.sg-nav .menu-layer { z-index: 61; mix-blend-mode: difference; right: auto; }
-/* Logo rechts: eigene Ebene ohne Blend, damit die Logo-Farben echt bleiben */
-.sg-nav .logo-layer { left: auto; }
+/* Menü-Button rechts: mix-blend-difference hält ihn auf hellen und dunklen Sektionen lesbar */
+.sg-nav .menu-layer { z-index: 61; mix-blend-mode: difference; left: auto; }
+/* Logo links: eigene Ebene ohne Blend, damit die Logo-Farben echt bleiben */
+.sg-nav .logo-layer { right: auto; }
 .sg-nav .site-header-wrapper[data-hidden="true"] { opacity: 0; transform: translateY(-100%); }
 .sg-nav .header .container { padding: 1.1rem var(--sg-container-padding); }
 .sg-nav .nav-row { display: flex; align-items: center; justify-content: space-between; }
@@ -70,8 +71,9 @@ const NAV_CSS = `
   background: rgba(11, 11, 10, .82); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(225, 224, 204, .08);
 }
-.sg-nav .nav-logo-row img { display: block; height: 2.1rem; width: auto; }
-@media (max-width: 640px) { .sg-nav .nav-logo-row img { height: 1.7rem; } }
+.sg-nav .nav-logo-row img { display: block; height: 1.9rem; width: auto; transition: transform .5s var(--sg-cubic); }
+.sg-nav .nav-logo-row:hover img { transform: translateX(.15rem) skewX(-6deg); }
+@media (max-width: 640px) { .sg-nav .nav-logo-row img { height: 1.6rem; } }
 .sg-nav .nav-logo-row sup { font-size: .55em; margin-left: .05em; }
 .sg-nav .nav-row__left { display: flex; align-items: center; gap: 1.25rem; }
 .sg-nav .nav-toggle-label {
@@ -92,14 +94,14 @@ const NAV_CSS = `
 .sg-nav .nav-overlay-wrapper { display: none; position: fixed; inset: 0; z-index: 55; }
 .sg-nav .overlay { position: absolute; inset: 0; background: rgba(11, 11, 10, .55); cursor: pointer; }
 .sg-nav .menu-content {
-  position: absolute; top: 0; left: 0; bottom: 0; width: min(38rem, 100%);
+  position: absolute; top: 0; right: 0; bottom: 0; width: min(38rem, 100%);
   display: flex; flex-direction: column; justify-content: space-between;
   padding: 6.5rem var(--sg-container-padding) 2rem;
 }
 .sg-nav .menu-bg { position: absolute; inset: 0; overflow: hidden; }
 .sg-nav .backdrop-layer { position: absolute; inset: 0; background: var(--sg-cream); }
 .sg-nav .backdrop-layer.first { background: #2a2a26; }
-.sg-nav .backdrop-layer.second { background: var(--sg-warm); }
+.sg-nav .backdrop-layer.second { background: var(--sg-accent); }
 .sg-nav .ambient-background-shapes { position: absolute; inset: 0; pointer-events: none; }
 .sg-nav .bg-shape { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
 .sg-nav .bg-shape.active { opacity: 1; }
@@ -241,7 +243,7 @@ export function Component({
           .fromTo(menuButtonTexts ?? [], { yPercent: 0 }, { yPercent: -100, stagger: 0.2 })
           .fromTo(menuButtonIcon ?? [], { rotate: 0 }, { rotate: 315 }, "<")
           .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1 }, "<")
-          .fromTo(bgPanels, { xPercent: -101 }, { xPercent: 0, stagger: 0.12, duration: 0.575 }, "<")
+          .fromTo(bgPanels, { xPercent: 101 }, { xPercent: 0, stagger: 0.12, duration: 0.575 }, "<")
           .fromTo(menuLinks, { yPercent: 140, rotate: 10 }, { yPercent: 0, rotate: 0, stagger: 0.05 }, "<+=0.35");
 
         if (fadeTargets.length) {
@@ -257,7 +259,7 @@ export function Component({
         if (navWrap) navWrap.setAttribute("data-nav", "closed");
 
         tl.to(overlay, { autoAlpha: 0 })
-          .to(menu, { xPercent: -120 }, "<")
+          .to(menu, { xPercent: 120 }, "<")
           .to(menuButtonTexts ?? [], { yPercent: 0 }, "<")
           .to(menuButtonIcon ?? [], { rotate: 0 }, "<")
           .set(navWrap, { display: "none" });
@@ -275,11 +277,10 @@ export function Component({
       if (e.key === "Escape" && isMenuOpen) setIsMenuOpen(false);
     };
     window.addEventListener("keydown", handleEsc);
-    const root = document.documentElement;
-    if (isMenuOpen) root.style.overflow = "hidden";
+    setScrollLocked("menu", isMenuOpen);
     return () => {
       window.removeEventListener("keydown", handleEsc);
-      if (isMenuOpen) root.style.overflow = "";
+      setScrollLocked("menu", false);
     };
   }, [isMenuOpen]);
 
@@ -331,7 +332,7 @@ export function Component({
       <div className="site-header-wrapper logo-layer" data-hidden={hidden ? "true" : "false"}>
         <div className="header">
           <div className="container is--full">
-            <a href={logoHref} aria-label="Startseite" className={"nav-logo-row" + (logoSrc ? " nav-logo-chip" : "")} onClick={closeMenu}>
+            <a href={logoHref} aria-label="Startseite" className="nav-logo-row" onClick={closeMenu}>
               {logoSrc ? (
                 <img src={logoSrc} alt={logo} />
               ) : (
@@ -357,14 +358,14 @@ export function Component({
               {/* Abstrakte Formen, je eine pro Menüpunkt (Fismet-Farben) */}
               <div className="ambient-background-shapes">
                 <svg className="bg-shape bg-shape-1" viewBox="0 0 400 400" fill="none" preserveAspectRatio="xMidYMid slice">
-                  <circle className="shape-element" cx="80" cy="120" r="40" fill="rgba(233,118,43,0.18)" />
+                  <circle className="shape-element" cx="80" cy="120" r="40" fill="rgba(45,125,251,0.18)" />
                   <circle className="shape-element" cx="300" cy="80" r="60" fill="rgba(11,11,10,0.07)" />
-                  <circle className="shape-element" cx="200" cy="300" r="80" fill="rgba(233,118,43,0.12)" />
+                  <circle className="shape-element" cx="200" cy="300" r="80" fill="rgba(45,125,251,0.12)" />
                   <circle className="shape-element" cx="350" cy="280" r="30" fill="rgba(11,11,10,0.08)" />
                 </svg>
 
                 <svg className="bg-shape bg-shape-2" viewBox="0 0 400 400" fill="none" preserveAspectRatio="xMidYMid slice">
-                  <path className="shape-element" d="M0 200 Q100 100, 200 200 T 400 200" stroke="rgba(233,118,43,0.2)" strokeWidth="60" fill="none" />
+                  <path className="shape-element" d="M0 200 Q100 100, 200 200 T 400 200" stroke="rgba(45,125,251,0.2)" strokeWidth="60" fill="none" />
                   <path className="shape-element" d="M0 280 Q100 180, 200 280 T 400 280" stroke="rgba(11,11,10,0.07)" strokeWidth="40" fill="none" />
                 </svg>
 
@@ -381,7 +382,7 @@ export function Component({
                       cx={cx}
                       cy={cy}
                       r={r}
-                      fill={i % 2 ? "rgba(11,11,10,0.14)" : "rgba(233,118,43,0.35)"}
+                      fill={i % 2 ? "rgba(11,11,10,0.14)" : "rgba(45,125,251,0.35)"}
                     />
                   ))}
                 </svg>
@@ -390,7 +391,7 @@ export function Component({
                   <path
                     className="shape-element"
                     d="M100 100 Q150 50, 200 100 Q250 150, 200 200 Q150 250, 100 200 Q50 150, 100 100"
-                    fill="rgba(233,118,43,0.16)"
+                    fill="rgba(45,125,251,0.16)"
                   />
                   <path
                     className="shape-element"
@@ -400,9 +401,9 @@ export function Component({
                 </svg>
 
                 <svg className="bg-shape bg-shape-5" viewBox="0 0 400 400" fill="none" preserveAspectRatio="xMidYMid slice">
-                  <line className="shape-element" x1="0" y1="100" x2="300" y2="400" stroke="rgba(233,118,43,0.18)" strokeWidth="30" />
+                  <line className="shape-element" x1="0" y1="100" x2="300" y2="400" stroke="rgba(45,125,251,0.18)" strokeWidth="30" />
                   <line className="shape-element" x1="100" y1="0" x2="400" y2="300" stroke="rgba(11,11,10,0.06)" strokeWidth="25" />
-                  <line className="shape-element" x1="200" y1="0" x2="400" y2="200" stroke="rgba(233,118,43,0.12)" strokeWidth="20" />
+                  <line className="shape-element" x1="200" y1="0" x2="400" y2="200" stroke="rgba(45,125,251,0.12)" strokeWidth="20" />
                 </svg>
               </div>
             </div>

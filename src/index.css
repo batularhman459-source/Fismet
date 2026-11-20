@@ -1,8 +1,14 @@
 @import "tailwindcss";
 
 @theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
   --color-primary: #e1e0cc;
   --color-ink: #0b0b0a;
+
+  /* Akzent aus dem Logo */
+  --color-accent: #2d7dfb;
+  --color-accent-deep: #1c57e1;
 
   /* shadcn-Tokens, auf das dunkle Fismet-Design abgestimmt */
   --color-background: #0b0b0a;
@@ -12,13 +18,13 @@
   --color-muted: #1f1f1c;
   --color-muted-foreground: #8d8c7e;
   --color-border: #2a2a26;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 html { background: #0b0b0a; }
 body { margin: 0; background: #0b0b0a; color: #e1e0cc; font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+::selection { background: #2d7dfb; color: #fff; }
 
-/* Körnung über dem Hero-Video */
-.noise-overlay {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
-}
+/* Lenis (weiches Scrollen) */
+html.lenis, html.lenis body { height: auto; }
+.lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+.lenis [data-lenis-prevent] { overscroll-behavior: contain; }

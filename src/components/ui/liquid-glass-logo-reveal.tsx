@@ -83,7 +83,7 @@ const LOOKS: Record<Look, Settings> = {
 /* ------------------------------------------------------------------ *
  * Logo → texture + signed distance field
  * ------------------------------------------------------------------ */
-const TEX = 1024
+const TEX = 1536 // Logo-Textur; höher = schärfer, aber mehr Speicher
 const BOX = 0.75
 
 interface LogoData {
