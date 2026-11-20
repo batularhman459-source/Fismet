@@ -18,6 +18,16 @@
   --color-muted: #1f1f1c;
   --color-muted-foreground: #8d8c7e;
   --color-border: #2a2a26;
+  --color-input: #2a2a26;
+  --color-ring: #2d7dfb;
+  --color-primary-foreground: #0b0b0a;
+  --color-accent-foreground: #ffffff;
+  --color-popover: #151513;
+  --color-popover-foreground: #e1e0cc;
+  --color-secondary: #1f1f1c;
+  --color-secondary-foreground: #e1e0cc;
+  --color-destructive: #e5484d;
+  --color-destructive-foreground: #ffffff;
 }
 
 html { background: #0b0b0a; }

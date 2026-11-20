@@ -8,7 +8,7 @@ import { DEFAULT_LAYERS, ParallaxComponent } from "@/components/ui/parallax-scro
 import { SvgPathDrawingTextAnimation } from "@/components/ui/path-drawing-portfolio-hero";
 import StackSpread from "@/components/ui/stack-spread";
 import { CONTACT, ContactSection, LegalOverlay, ProcessSection } from "@/components/sections/fismet-sections";
-import { StickyFloatingPathsBackground } from "@/components/ui/floating-paths";
+import { Toaster } from "sonner";
 import { Component as KineticNavigation } from "@/components/ui/sterling-gate-kinetic-navigation";
 import { setScrollLocked } from "@/lib/scroll-lock";
 
@@ -155,7 +155,7 @@ export default function App() {
       <StackSpread />
 
       {/* Alles nach der Live-Sektion: gemeinsamer Bereich für den späteren Hintergrund */}
-      <StickyFloatingPathsBackground>
+      <div id="nach-live">
 
         <FeaturesWithPanel id="leistungen" />
         <ProcessSection id="ablauf" />
@@ -197,9 +197,10 @@ export default function App() {
             },
           ]}
         />
-      </StickyFloatingPathsBackground>
+      </div>
 
       <LegalOverlay />
+      <Toaster theme="dark" position="bottom-center" richColors closeButton />
     </main>
   );
 }
