@@ -1,13 +1,14 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import FeaturesWithPanel from "@/components/ui/features-with-panel";
 import HalftoneWordmarkFooter from "@/components/ui/halftone-wordmark-footer";
-import { FismetGlassReveal, glassRevealDuration } from "@/components/ui/liquid-glass-logo-reveal";
+import { FISMET_LOADER_TUNING, FismetGlassReveal } from "@/components/ui/liquid-glass-logo-reveal";
 import { PrismaHero } from "@/components/ui/prisma-hero";
 import StackSpread from "@/components/ui/stack-spread";
 import { Component as KineticNavigation } from "@/components/ui/sterling-gate-kinetic-navigation";
 
 const EASE = [0.76, 0, 0.24, 1] as const;
+const LOGO_SRC = `${import.meta.env.BASE_URL}fismet-logo.png`;
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -15,16 +16,24 @@ export default function App() {
   // Ladebildschirm: so lange das Glas-Reveal läuft, danach Vorhang nach oben zum Hero
   useEffect(() => {
     // Die Animationen laufen bewusst auch bei „Animationen reduzieren“ (Windows/macOS)
-    const ms = (glassRevealDuration("dark") + 0.4) * 1000;
+    // Notbremse: spätestens nach 5 s ist der Ladebildschirm weg
     const root = document.documentElement;
     root.style.overflow = "hidden";
     window.scrollTo(0, 0);
-    const t = window.setTimeout(() => setLoading(false), ms);
+    const t = window.setTimeout(() => setLoading(false), 5000);
     return () => {
       window.clearTimeout(t);
       root.style.overflow = "";
     };
   }, []);
+
+  // Vorhang öffnet, sobald das Glas das Logo freigegeben hat (~1,9 s nach Animationsstart)
+  const revealTimer = useRef<number | undefined>(undefined);
+  const onRevealStart = useCallback(() => {
+    if (revealTimer.current !== undefined) return;
+    revealTimer.current = window.setTimeout(() => setLoading(false), (FISMET_LOADER_TUNING.present + 0.6) * 1000);
+  }, []);
+  useEffect(() => () => window.clearTimeout(revealTimer.current), []);
 
   useEffect(() => {
     if (!loading) document.documentElement.style.overflow = "";
@@ -34,6 +43,8 @@ export default function App() {
     <main className="bg-ink">
       <KineticNavigation
         hidden={loading}
+        logoSrc={LOGO_SRC}
+        logo="Fismet Webdesign"
         meta={
           <>
             <a href="mailto:hallo@fismet.de">hallo@fismet.de</a>
@@ -49,12 +60,17 @@ export default function App() {
             className="fixed inset-0 z-50 bg-ink"
             initial={{ clipPath: "inset(0% 0% 0% 0%)" }}
             exit={{ clipPath: "inset(0% 0% 100% 0%)" }}
-            transition={{ duration: 1, ease: EASE }}
+            transition={{ duration: 0.8, ease: EASE }}
           >
-            <FismetGlassReveal className="h-full w-full" respectReducedMotion={false} />
-            <p className="pointer-events-none absolute inset-x-0 bottom-8 text-center font-mono text-[10px] uppercase tracking-[0.4em] text-primary/40">
-              Fismet Webdesign
-            </p>
+            <FismetGlassReveal
+              className="h-full w-full"
+              logo={LOGO_SRC}
+              originalColors
+              logoScale={0.62}
+              finalScale={0.9}
+              onRevealStart={onRevealStart}
+              respectReducedMotion={false}
+            />
           </motion.div>
         )}
       </AnimatePresence>
@@ -65,7 +81,7 @@ export default function App() {
         animate={loading ? {} : { scale: 1, filter: "blur(0px)" }}
         transition={{ duration: 1.2, ease: EASE }}
       >
-        <PrismaHero ready={!loading} />
+        <PrismaHero ready={!loading} navItems={[]} />
       </motion.div>
 
       <StackSpread />

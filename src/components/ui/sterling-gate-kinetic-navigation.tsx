@@ -13,8 +13,10 @@ export interface KineticNavLink {
 }
 
 export interface KineticNavigationProps {
-  /** Text-Logo oben links */
+  /** Text-Logo (wird genutzt, wenn kein logoSrc gesetzt ist) */
   logo?: string;
+  /** Bild-Logo (z. B. PNG mit transparentem Hintergrund) */
+  logoSrc?: string;
   logoHref?: string;
   links?: KineticNavLink[];
   /** Kleine Zeile unten im Menü (z. B. E-Mail) */
@@ -49,18 +51,29 @@ const NAV_CSS = `
 /* Header: liegt fix oben; mix-blend-difference hält ihn auf hellen und dunklen Sektionen lesbar */
 .sg-nav .site-header-wrapper {
   position: fixed; inset: 0 0 auto 0; z-index: 60; pointer-events: none;
-  mix-blend-mode: difference; color: var(--sg-cream);
+  color: var(--sg-cream);
   transition: opacity .6s ease, transform .6s var(--sg-cubic);
 }
+/* Menü-Button links: mix-blend-difference hält ihn auf hellen und dunklen Sektionen lesbar */
+.sg-nav .menu-layer { z-index: 61; mix-blend-mode: difference; right: auto; }
+/* Logo rechts: eigene Ebene ohne Blend, damit die Logo-Farben echt bleiben */
+.sg-nav .logo-layer { left: auto; }
 .sg-nav .site-header-wrapper[data-hidden="true"] { opacity: 0; transform: translateY(-100%); }
 .sg-nav .header .container { padding: 1.1rem var(--sg-container-padding); }
 .sg-nav .nav-row { display: flex; align-items: center; justify-content: space-between; }
 .sg-nav .nav-logo-row {
-  pointer-events: auto; color: inherit; text-decoration: none;
+  pointer-events: auto; color: inherit; text-decoration: none; display: flex; align-items: center;
   font-size: 1.35rem; font-weight: 600; letter-spacing: -0.05em; line-height: 1;
 }
+.sg-nav .nav-logo-chip {
+  padding: .45rem .8rem; border-radius: 999px;
+  background: rgba(11, 11, 10, .82); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(225, 224, 204, .08);
+}
+.sg-nav .nav-logo-row img { display: block; height: 2.1rem; width: auto; }
+@media (max-width: 640px) { .sg-nav .nav-logo-row img { height: 1.7rem; } }
 .sg-nav .nav-logo-row sup { font-size: .55em; margin-left: .05em; }
-.sg-nav .nav-row__right { display: flex; align-items: center; gap: 1.25rem; }
+.sg-nav .nav-row__left { display: flex; align-items: center; gap: 1.25rem; }
 .sg-nav .nav-toggle-label {
   font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 10.5px;
   letter-spacing: .2em; text-transform: uppercase; opacity: .55; user-select: none;
@@ -79,7 +92,7 @@ const NAV_CSS = `
 .sg-nav .nav-overlay-wrapper { display: none; position: fixed; inset: 0; z-index: 55; }
 .sg-nav .overlay { position: absolute; inset: 0; background: rgba(11, 11, 10, .55); cursor: pointer; }
 .sg-nav .menu-content {
-  position: absolute; top: 0; right: 0; bottom: 0; width: min(38rem, 100%);
+  position: absolute; top: 0; left: 0; bottom: 0; width: min(38rem, 100%);
   display: flex; flex-direction: column; justify-content: space-between;
   padding: 6.5rem var(--sg-container-padding) 2rem;
 }
@@ -123,6 +136,7 @@ const NAV_CSS = `
 
 export function Component({
   logo = "Fismet",
+  logoSrc,
   logoHref = "#studio",
   links = DEFAULT_LINKS,
   meta,
@@ -227,7 +241,7 @@ export function Component({
           .fromTo(menuButtonTexts ?? [], { yPercent: 0 }, { yPercent: -100, stagger: 0.2 })
           .fromTo(menuButtonIcon ?? [], { rotate: 0 }, { rotate: 315 }, "<")
           .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1 }, "<")
-          .fromTo(bgPanels, { xPercent: 101 }, { xPercent: 0, stagger: 0.12, duration: 0.575 }, "<")
+          .fromTo(bgPanels, { xPercent: -101 }, { xPercent: 0, stagger: 0.12, duration: 0.575 }, "<")
           .fromTo(menuLinks, { yPercent: 140, rotate: 10 }, { yPercent: 0, rotate: 0, stagger: 0.05 }, "<+=0.35");
 
         if (fadeTargets.length) {
@@ -243,7 +257,7 @@ export function Component({
         if (navWrap) navWrap.setAttribute("data-nav", "closed");
 
         tl.to(overlay, { autoAlpha: 0 })
-          .to(menu, { xPercent: 120 }, "<")
+          .to(menu, { xPercent: -120 }, "<")
           .to(menuButtonTexts ?? [], { yPercent: 0 }, "<")
           .to(menuButtonIcon ?? [], { rotate: 0 }, "<")
           .set(navWrap, { display: "none" });
@@ -275,21 +289,11 @@ export function Component({
   return (
     <div ref={containerRef} className="sg-nav">
       <style>{NAV_CSS}</style>
-      <div className="site-header-wrapper" data-hidden={hidden ? "true" : "false"}>
+      <div className="site-header-wrapper menu-layer" data-hidden={hidden ? "true" : "false"}>
         <header className="header">
           <div className="container is--full">
             <nav className="nav-row" aria-label="Hauptnavigation">
-              <a href={logoHref} aria-label="Startseite" className="nav-logo-row" onClick={closeMenu}>
-                {logo}
-                <sup>*</sup>
-              </a>
-              <div className="nav-row__right">
-                {hint ? (
-                  <div className="nav-toggle-label" onClick={toggleMenu} style={{ cursor: "pointer", pointerEvents: "auto" }}>
-                    <span className="toggle-text">{hint}</span>
-                  </div>
-                ) : null}
-
+              <div className="nav-row__left">
                 <button
                   type="button"
                   className="nav-close-btn"
@@ -313,10 +317,32 @@ export function Component({
                     </svg>
                   </div>
                 </button>
+                {hint ? (
+                  <div className="nav-toggle-label" onClick={toggleMenu} style={{ cursor: "pointer", pointerEvents: "auto" }}>
+                    <span className="toggle-text">{hint}</span>
+                  </div>
+                ) : null}
               </div>
             </nav>
           </div>
         </header>
+      </div>
+
+      <div className="site-header-wrapper logo-layer" data-hidden={hidden ? "true" : "false"}>
+        <div className="header">
+          <div className="container is--full">
+            <a href={logoHref} aria-label="Startseite" className={"nav-logo-row" + (logoSrc ? " nav-logo-chip" : "")} onClick={closeMenu}>
+              {logoSrc ? (
+                <img src={logoSrc} alt={logo} />
+              ) : (
+                <>
+                  {logo}
+                  <sup>*</sup>
+                </>
+              )}
+            </a>
+          </div>
+        </div>
       </div>
 
       <section className="fullscreen-menu-container">

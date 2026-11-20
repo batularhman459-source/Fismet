@@ -139,7 +139,8 @@ const PrismaHero = ({
         {/* Verlauf */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
 
-        {/* Navigation */}
+        {/* Navigation (nur, wenn Links übergeben werden) */}
+        {navItems.length > 0 && (
         <nav className="absolute left-1/2 top-0 z-20 -translate-x-1/2">
           <div className="flex items-center gap-3 rounded-b-2xl bg-black px-4 py-2 sm:gap-6 md:gap-12 md:rounded-b-3xl md:px-8 lg:gap-14">
             {navItems.map((item) => (
@@ -153,6 +154,7 @@ const PrismaHero = ({
             ))}
           </div>
         </nav>
+        )}
 
         {/* Inhalt */}
         <div className="absolute bottom-0 left-0 right-0 px-4 pb-2 sm:px-6 md:px-10">

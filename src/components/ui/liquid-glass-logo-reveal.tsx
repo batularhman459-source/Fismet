@@ -760,6 +760,8 @@ export interface GlassIconRevealProps extends Omit<React.HTMLAttributes<HTMLDivE
   label?: string
   /** Folgt der System-Einstellung „Animationen reduzieren“ (Standard: true). false = immer animieren */
   respectReducedMotion?: boolean
+  /** Wird aufgerufen, sobald das Logo geladen ist und die Animation startet */
+  onRevealStart?: () => void
 }
 
 export function GlassIconReveal({
@@ -782,6 +784,7 @@ export function GlassIconReveal({
   tuning,
   label = "Logo",
   respectReducedMotion = true,
+  onRevealStart,
   className,
   style,
   onClick,
@@ -828,13 +831,20 @@ export function GlassIconReveal({
       (data) => {
         if (cancelled) return
         engineRef.current?.setLogo(data)
+        onStartRef.current?.()
       },
-      (err) => console.error(err),
+      (err) => {
+        console.error(err)
+        onStartRef.current?.()
+      },
     )
     return () => {
       cancelled = true
     }
   }, [logo])
+
+  const onStartRef = React.useRef(onRevealStart)
+  onStartRef.current = onRevealStart
 
   const fallbackUrl = React.useMemo(() => (fallback ? logoUrl(logo) : ""), [fallback, logo])
 
@@ -1038,12 +1048,15 @@ function startEngine(
  * ------------------------------------------------------------------ */
 export const FISMET_MARK = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M22 8H82V30H46V44H74V64H46V92H22Z"/><circle cx="82" cy="78" r="9"/></svg>`
 
-export type FismetGlassRevealProps = Omit<GlassIconRevealProps, "logo">
+export type FismetGlassRevealProps = Omit<GlassIconRevealProps, "logo"> & { logo?: string }
 
-export function FismetGlassReveal(props: FismetGlassRevealProps) {
+/** Kürzere Variante für den Ladebildschirm: ca. 1,3 s Glas, dann steht das Logo */
+export const FISMET_LOADER_TUNING = { present: 1.3, glide: 1.2, startZoom: 1.4 }
+
+export function FismetGlassReveal({ logo = FISMET_MARK, tuning, ...props }: FismetGlassRevealProps) {
   return (
     <GlassIconReveal
-      logo={FISMET_MARK}
+      logo={logo}
       label="Fismet Webdesign"
       look="dark"
       iconPlate={false}
@@ -1053,6 +1066,7 @@ export function FismetGlassReveal(props: FismetGlassRevealProps) {
       finalScale={0.8}
       loop={false}
       {...props}
+      tuning={{ ...FISMET_LOADER_TUNING, ...tuning }}
     />
   )
 }
