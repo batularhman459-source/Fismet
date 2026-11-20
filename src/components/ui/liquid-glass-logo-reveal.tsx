@@ -758,6 +758,8 @@ export interface GlassIconRevealProps extends Omit<React.HTMLAttributes<HTMLDivE
   time?: number
   tuning?: Partial<GlassTuning>
   label?: string
+  /** Folgt der System-Einstellung „Animationen reduzieren“ (Standard: true). false = immer animieren */
+  respectReducedMotion?: boolean
 }
 
 export function GlassIconReveal({
@@ -779,6 +781,7 @@ export function GlassIconReveal({
   time,
   tuning,
   label = "Logo",
+  respectReducedMotion = true,
   className,
   style,
   onClick,
@@ -797,8 +800,8 @@ export function GlassIconReveal({
     return { ...LOOKS[look], ...set, ...(JSON.parse(tuningKey) as Partial<GlassTuning>) }
   }, [look, background, logoColor, plateColor, iconPlate, keepPlate, originalColors, tileSize, logoScale, finalScale, hold, offsetKey, tuningKey])
 
-  const live = React.useRef({ settings, loop, speed, time })
-  live.current = { settings, loop, speed, time }
+  const live = React.useRef({ settings, loop, speed, time, respectReducedMotion })
+  live.current = { settings, loop, speed, time, respectReducedMotion }
 
   React.useEffect(() => {
     const wrap = wrapRef.current
@@ -875,7 +878,7 @@ export function GlassIconReveal({
 
 function startEngine(
   wrap: HTMLDivElement,
-  live: React.RefObject<{ settings: Settings; loop: boolean; speed: number; time?: number }>,
+  live: React.RefObject<{ settings: Settings; loop: boolean; speed: number; time?: number; respectReducedMotion: boolean }>,
 ) {
   const canvas = document.createElement("canvas")
   canvas.setAttribute("aria-hidden", "true")
@@ -893,7 +896,8 @@ function startEngine(
     return null
   }
 
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  const reduceMotion =
+    live.current.respectReducedMotion && window.matchMedia("(prefers-reduced-motion: reduce)").matches
   let logo: LogoData | null = null
   let time = reduceMotion ? 1.4 : 0
   let playing = !reduceMotion

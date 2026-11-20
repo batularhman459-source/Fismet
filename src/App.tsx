@@ -13,8 +13,8 @@ export default function App() {
 
   // Ladebildschirm: so lange das Glas-Reveal läuft, danach Vorhang nach oben zum Hero
   useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const ms = reduce ? 1200 : (glassRevealDuration("dark") + 0.4) * 1000;
+    // Die Animationen laufen bewusst auch bei „Animationen reduzieren“ (Windows/macOS)
+    const ms = (glassRevealDuration("dark") + 0.4) * 1000;
     const root = document.documentElement;
     root.style.overflow = "hidden";
     window.scrollTo(0, 0);
@@ -40,7 +40,7 @@ export default function App() {
             exit={{ clipPath: "inset(0% 0% 100% 0%)" }}
             transition={{ duration: 1, ease: EASE }}
           >
-            <FismetGlassReveal className="h-full w-full" />
+            <FismetGlassReveal className="h-full w-full" respectReducedMotion={false} />
             <p className="pointer-events-none absolute inset-x-0 bottom-8 text-center font-mono text-[10px] uppercase tracking-[0.4em] text-primary/40">
               Fismet Webdesign
             </p>
@@ -71,6 +71,7 @@ export default function App() {
           backToTopLabel="Nach oben ↑"
           radius={115}
           drag={0.75}
+          respectReducedMotion={false}
           columns={[
             {
               title: "Studio",

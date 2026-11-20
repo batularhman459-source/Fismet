@@ -60,6 +60,8 @@ export interface HalftoneWordmarkFooterProps {
   grain?: number
   /** Pointer and click response. Defaults to true. */
   interactive?: boolean
+  /** Follow the OS "reduce motion" setting (default true). false = always react to the pointer. */
+  respectReducedMotion?: boolean
   /** Face for the wordmark. Heavy grotesks print best. */
   fontFamily?: string
   /** Weight of the wordmark. Defaults to 800. */
@@ -194,6 +196,7 @@ export default function HalftoneWordmarkFooter({
   crop = 0.2,
   grain = 0.5,
   interactive = true,
+  respectReducedMotion = true,
   fontFamily = SANS_STACK,
   fontWeight = 800,
   monoFamily = MONO_STACK,
@@ -215,7 +218,7 @@ export default function HalftoneWordmarkFooter({
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const reduced = respectReducedMotion && window.matchMedia("(prefers-reduced-motion: reduce)").matches
     let w = 0
     let h = 0
     let dpr = 1
@@ -471,7 +474,7 @@ export default function HalftoneWordmarkFooter({
       root.removeEventListener("pointerleave", onLeave)
       root.removeEventListener("pointerdown", onDown)
     }
-  }, [key])
+  }, [key, respectReducedMotion])
 
   const toTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" })
