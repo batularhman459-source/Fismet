@@ -7,7 +7,8 @@ import { FISMET_LOADER_TUNING, FismetGlassReveal } from "@/components/ui/liquid-
 import { DEFAULT_LAYERS, ParallaxComponent } from "@/components/ui/parallax-scrolling";
 import { SvgPathDrawingTextAnimation } from "@/components/ui/path-drawing-portfolio-hero";
 import StackSpread from "@/components/ui/stack-spread";
-import { CONTACT, ContactSection, LegalOverlay, ProcessSection, TeamSection } from "@/components/sections/fismet-sections";
+import { CONTACT, ContactSection, LegalOverlay, ProcessSection } from "@/components/sections/fismet-sections";
+import { StickyFloatingPathsBackground } from "@/components/ui/floating-paths";
 import { Component as KineticNavigation } from "@/components/ui/sterling-gate-kinetic-navigation";
 import { setScrollLocked } from "@/lib/scroll-lock";
 
@@ -146,9 +147,6 @@ export default function App() {
                   <ArrowRight className="h-4 w-4" />
                 </span>
               </a>
-              <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-primary/45">
-                Pierre &amp; Abderrahman · Webdesign-Studio
-              </span>
             </motion.div>
           </div>
         </ParallaxComponent>
@@ -157,12 +155,10 @@ export default function App() {
       <StackSpread />
 
       {/* Alles nach der Live-Sektion: gemeinsamer Bereich für den späteren Hintergrund */}
-      <div id="nach-live" className="relative isolate">
-        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10" data-background-slot />
+      <StickyFloatingPathsBackground>
 
         <FeaturesWithPanel id="leistungen" />
         <ProcessSection id="ablauf" />
-        <TeamSection id="team" />
         <ContactSection id="kontakt" />
 
         <HalftoneWordmarkFooter
@@ -182,7 +178,6 @@ export default function App() {
                 { label: "Projekte", href: "#projekte" },
                 { label: "Leistungen", href: "#leistungen" },
                 { label: "Ablauf", href: "#ablauf" },
-                { label: "Über uns", href: "#team" },
               ],
             },
             {
@@ -202,7 +197,7 @@ export default function App() {
             },
           ]}
         />
-      </div>
+      </StickyFloatingPathsBackground>
 
       <LegalOverlay />
     </main>

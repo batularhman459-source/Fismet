@@ -34,7 +34,6 @@ const DEFAULT_LINKS: KineticNavLink[] = [
   { label: "Projekte", href: "#projekte" },
   { label: "Leistungen", href: "#leistungen" },
   { label: "Ablauf", href: "#ablauf" },
-  { label: "Über uns", href: "#team" },
   { label: "Kontakt", href: "#kontakt" },
 ];
 

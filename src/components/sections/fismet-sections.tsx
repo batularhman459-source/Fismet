@@ -33,19 +33,14 @@ function Reveal({ children, delay = 0, className }: { children: ReactNode; delay
   );
 }
 
-function SectionHead({ label, title, muted }: { label: string; title: string; muted?: string }) {
+function SectionHead({ title, muted }: { title: string; muted?: string }) {
   return (
-    <div className="mb-14 grid gap-6 md:mb-20 md:grid-cols-12">
-      <Reveal className="md:col-span-3">
-        <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent">{label}</p>
-      </Reveal>
-      <Reveal className="md:col-span-9" delay={0.05}>
-        <h2 className="text-4xl font-medium leading-[0.95] tracking-[-0.045em] text-primary sm:text-6xl">
-          {title}
-          {muted ? <span className="text-primary/35"> {muted}</span> : null}
-        </h2>
-      </Reveal>
-    </div>
+    <Reveal className="mb-14 md:mb-20">
+      <h2 className="max-w-5xl text-4xl font-medium leading-[0.95] tracking-[-0.045em] text-primary sm:text-6xl">
+        {title}
+        {muted ? <span className="text-primary/35"> {muted}</span> : null}
+      </h2>
+    </Reveal>
   );
 }
 
@@ -63,7 +58,7 @@ const STEPS = [
 export function ProcessSection({ id = "ablauf" }: { id?: string }) {
   return (
     <section id={id} className="px-4 py-24 sm:px-6 md:px-10 md:py-32">
-      <SectionHead label="Ablauf" title="Von der Idee zur Website" muted="– in vier Schritten." />
+      <SectionHead title="Von der Idee zur Website" muted="– in vier Schritten." />
       <ol className="grid gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4">
         {STEPS.map((s, i) => (
           <Reveal key={s.title} delay={i * 0.07} className="h-full">
@@ -81,47 +76,6 @@ export function ProcessSection({ id = "ablauf" }: { id?: string }) {
           </Reveal>
         ))}
       </ol>
-    </section>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Team
-// ---------------------------------------------------------------------------
-
-const TEAM = [
-  { name: "Pierre", role: "Design & Konzept", text: "Platzhalter: ein, zwei Sätze über Pierre – Hintergrund, Stärken, was ihm an Webdesign Spaß macht." },
-  { name: "Abderrahman", role: "Entwicklung & Technik", text: "Platzhalter: ein, zwei Sätze über Abderrahman – Hintergrund, Stärken, was ihm an Webentwicklung Spaß macht." },
-];
-
-export function TeamSection({ id = "team" }: { id?: string }) {
-  return (
-    <section id={id} className="px-4 py-24 sm:px-6 md:px-10 md:py-32">
-      <SectionHead label="Über uns" title="Zwei Leute, ein Studio." muted="Kurze Wege, direkter Draht." />
-      <div className="grid gap-6 md:grid-cols-2">
-        {TEAM.map((m, i) => (
-          <Reveal key={m.name} delay={i * 0.1}>
-            <article className="group overflow-hidden rounded-2xl border border-border bg-card">
-              {/* Platzhalter für ein Foto (4:3) */}
-              <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-[#121a2e] via-[#0f1115] to-[#0b0b0a]">
-                <span className="absolute inset-0 flex items-center justify-center text-[9rem] font-semibold tracking-[-0.06em] text-primary/[0.07] transition-transform duration-700 group-hover:scale-105">
-                  {m.name.slice(0, 1)}
-                </span>
-                <span className="absolute bottom-4 left-4 rounded-full bg-black/50 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-primary/60 backdrop-blur">
-                  Foto folgt
-                </span>
-              </div>
-              <div className="flex flex-col gap-3 p-6 md:p-8">
-                <div className="flex items-baseline justify-between gap-4">
-                  <h3 className="text-3xl font-medium tracking-[-0.04em] text-primary">{m.name}</h3>
-                  <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-accent">{m.role}</span>
-                </div>
-                <p className="max-w-md text-sm leading-relaxed text-primary/55">{m.text}</p>
-              </div>
-            </article>
-          </Reveal>
-        ))}
-      </div>
     </section>
   );
 }
@@ -160,7 +114,7 @@ export function ContactSection({ id = "kontakt" }: { id?: string }) {
 
   return (
     <section id={id} className="px-4 py-24 sm:px-6 md:px-10 md:py-32">
-      <SectionHead label="Kontakt" title="Lass uns über euer Projekt reden." muted="Antwort meist innerhalb von 24 h." />
+      <SectionHead title="Lass uns über euer Projekt reden." muted="Antwort meist innerhalb von 24 h." />
       <div className="grid gap-10 lg:grid-cols-12">
         <Reveal className="lg:col-span-4">
           <div className="flex flex-col gap-4">
