@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { Mail, MapPin, Phone, X } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import OnboardingForm from "@/components/ui/multistep-form";
+import { RollingTextList } from "@/components/ui/rolling-list";
 import { setScrollLocked } from "@/lib/scroll-lock";
 
 // ---------------------------------------------------------------------------
@@ -48,34 +49,13 @@ function SectionHead({ title, muted }: { title: string; muted?: string }) {
 // Ablauf
 // ---------------------------------------------------------------------------
 
-const STEPS = [
-  { title: "Kennenlernen", text: "Kurzes Gespräch: Was braucht ihr, wen wollt ihr erreichen, was ist das Ziel?", time: "Tag 1" },
-  { title: "Konzept & Design", text: "Struktur, Inhalte und ein Design-Entwurf, den ihr vorab seht und mitgestaltet.", time: "Woche 1–2" },
-  { title: "Entwicklung", text: "Wir bauen die Seite sauber, schnell und für alle Bildschirme.", time: "Woche 2–4" },
-  { title: "Launch & Betreuung", text: "Livegang, Feinschliff und auf Wunsch laufende Pflege danach.", time: "ab Woche 4" },
-];
-
 export function ProcessSection({ id = "ablauf" }: { id?: string }) {
   return (
     <section id={id} className="px-4 py-24 sm:px-6 md:px-10 md:py-32">
       <SectionHead title="Von der Idee zur Website" muted="– in vier Schritten." />
-      <ol className="grid gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4">
-        {STEPS.map((s, i) => (
-          <Reveal key={s.title} delay={i * 0.07} className="h-full">
-            <li className="group flex h-full flex-col gap-10 bg-ink p-6 transition-colors duration-500 hover:bg-[#10131c] md:p-8">
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-xs text-accent">{String(i + 1).padStart(2, "0")}</span>
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary/35">{s.time}</span>
-              </div>
-              <div>
-                <h3 className="mb-3 text-2xl font-medium tracking-[-0.03em] text-primary">{s.title}</h3>
-                <p className="text-sm leading-relaxed text-primary/55">{s.text}</p>
-              </div>
-              <div className="mt-auto h-px w-full origin-left scale-x-0 bg-accent transition-transform duration-700 group-hover:scale-x-100" />
-            </li>
-          </Reveal>
-        ))}
-      </ol>
+      <Reveal>
+        <RollingTextList />
+      </Reveal>
     </section>
   );
 }

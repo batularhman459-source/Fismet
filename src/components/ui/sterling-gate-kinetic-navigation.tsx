@@ -32,8 +32,8 @@ export interface KineticNavigationProps {
 
 const DEFAULT_LINKS: KineticNavLink[] = [
   { label: "Projekte", href: "#projekte" },
-  { label: "Leistungen", href: "#leistungen" },
   { label: "Ablauf", href: "#ablauf" },
+  { label: "FAQ", href: "#faq" },
   { label: "Kontakt", href: "#kontakt" },
 ];
 

@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import FeaturesWithPanel from "@/components/ui/features-with-panel";
+import { FaqTabs } from "@/components/ui/faq-tabs";
 import HalftoneWordmarkFooter from "@/components/ui/halftone-wordmark-footer";
 import { FISMET_LOADER_TUNING, FismetGlassReveal } from "@/components/ui/liquid-glass-logo-reveal";
 import { DEFAULT_LAYERS, ParallaxComponent } from "@/components/ui/parallax-scrolling";
@@ -157,8 +157,8 @@ export default function App() {
       {/* Alles nach der Live-Sektion: gemeinsamer Bereich für den späteren Hintergrund */}
       <div id="nach-live">
 
-        <FeaturesWithPanel id="leistungen" />
         <ProcessSection id="ablauf" />
+        <FaqTabs id="faq" />
         <ContactSection id="kontakt" />
 
         <HalftoneWordmarkFooter
@@ -176,8 +176,8 @@ export default function App() {
               title: "Studio",
               links: [
                 { label: "Projekte", href: "#projekte" },
-                { label: "Leistungen", href: "#leistungen" },
                 { label: "Ablauf", href: "#ablauf" },
+                { label: "FAQ", href: "#faq" },
               ],
             },
             {
