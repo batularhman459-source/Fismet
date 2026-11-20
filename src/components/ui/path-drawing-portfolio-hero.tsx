@@ -163,6 +163,8 @@ export function SvgPathDrawingTextAnimation({
 }: SvgPathDrawingTextAnimationProps) {
   const reactId = useId().replace(/:/g, "");
   const gradientId = `pathGradient-${reactId}`;
+  const sweepFillId = `pathSweepFill-${reactId}`;
+  const sweepStrokeId = `pathSweepStroke-${reactId}`;
   const svgRef = useRef<SVGSVGElement>(null);
   const textRef = useRef<SVGTextElement>(null);
   const [dashLength, setDashLength] = useState(0);
@@ -171,6 +173,52 @@ export function SvgPathDrawingTextAnimation({
   const systemReduce = useReducedMotion();
   const reduceMotion = respectReducedMotion && systemReduce;
   const display = text.trim();
+  // Mit fillColor: weicher Wisch von links nach rechts – vor der Kante blau, dahinter fillColor
+  const sweep = fillAfterDraw && Boolean(fillColor);
+
+  const setSweep = (p: number) => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const c = (v: number) => String(Math.min(1, Math.max(0, v)));
+    const f = svg.querySelectorAll<SVGStopElement>(`#${sweepFillId} stop`);
+    const st = svg.querySelectorAll<SVGStopElement>(`#${sweepStrokeId} stop`);
+    if (f.length === 4) {
+      f[1].setAttribute("offset", c(p));
+      f[2].setAttribute("offset", c(p + 0.1));
+      f[3].setAttribute("offset", c(p + 0.32));
+    }
+    if (st.length === 4) {
+      st[1].setAttribute("offset", c(p));
+      st[2].setAttribute("offset", c(p + 0.12));
+    }
+  };
+
+  // Wisch-Animation, sobald die Kontur fertig gezeichnet ist
+  useEffect(() => {
+    if (!sweep) return;
+    if (!filled) {
+      setSweep(-0.45);
+      return;
+    }
+    if (reduceMotion) {
+      setSweep(1);
+      return;
+    }
+    const from = -0.45;
+    const to = 1;
+    const ms = Math.max(0.2, fillDurationSec) * 1000;
+    const start = performance.now();
+    let raf = 0;
+    const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / ms);
+      setSweep(from + (to - from) * ease(t));
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sweep, filled, reduceMotion, fillDurationSec]);
 
   useEffect(() => {
     if (!display || reduceMotion) return;
@@ -275,6 +323,22 @@ export function SvgPathDrawingTextAnimation({
             <stop offset="0%" stopColor={fromColor} />
             <stop offset="100%" stopColor={toColor} />
           </linearGradient>
+          {sweep ? (
+            <>
+              <linearGradient id={sweepFillId} x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0" stopColor={fillColor} />
+                <stop offset="0" stopColor={fillColor} />
+                <stop offset="0" stopColor={toColor} stopOpacity={1} />
+                <stop offset="0" stopColor={toColor} stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id={sweepStrokeId} x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0" stopColor={fillColor} />
+                <stop offset="0" stopColor={fillColor} />
+                <stop offset="0" stopColor={fromColor} />
+                <stop offset="1" stopColor={toColor} />
+              </linearGradient>
+            </>
+          ) : null}
         </defs>
 
         <text
@@ -284,10 +348,10 @@ export function SvgPathDrawingTextAnimation({
           y={viewBoxHeight / 2}
           textAnchor="middle"
           dominantBaseline="middle"
-          fill={fillColor ?? `url(#${gradientId})`}
-          fillOpacity={showFill ? 1 : 0}
-          strokeOpacity={showFill ? 0 : 1}
-          stroke={`url(#${gradientId})`}
+          fill={sweep ? `url(#${sweepFillId})` : fillColor ?? `url(#${gradientId})`}
+          fillOpacity={sweep ? 1 : showFill ? 1 : 0}
+          strokeOpacity={sweep ? 1 : showFill ? 0 : 1}
+          stroke={sweep ? `url(#${sweepStrokeId})` : `url(#${gradientId})`}
           strokeWidth={strokeWidth}
           strokeLinejoin="round"
           strokeLinecap="round"
@@ -295,9 +359,13 @@ export function SvgPathDrawingTextAnimation({
           fontWeight={fontWeight}
           fontFamily={fontFamily}
           letterSpacing={letterSpacing}
-          style={{
-            transition: `fill-opacity ${fillDurationSec}s cubic-bezier(.22,1,.36,1), stroke-opacity ${fillDurationSec}s ease ${fillDurationSec * 0.5}s`,
-          }}
+          style={
+            sweep
+              ? undefined
+              : {
+                  transition: `fill-opacity ${fillDurationSec}s cubic-bezier(.22,1,.36,1), stroke-opacity ${fillDurationSec}s ease ${fillDurationSec * 0.5}s`,
+                }
+          }
         >
           {display}
         </text>
