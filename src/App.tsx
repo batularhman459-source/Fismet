@@ -1,54 +1,108 @@
-import { ArrowUpRight } from "lucide-react";
-import PerspectiveTunnelHero from "@/components/ui/perspective-tunnel-hero";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import HalftoneWordmarkFooter from "@/components/ui/halftone-wordmark-footer";
+import { FismetGlassReveal, glassRevealDuration } from "@/components/ui/liquid-glass-logo-reveal";
 import { PrismaHero } from "@/components/ui/prisma-hero";
-import StackSpread from "@/components/ui/stack-spread";
+import { WarpCarousel } from "@/components/ui/warp-carousel";
+
+const EASE = [0.76, 0, 0.24, 1] as const;
 
 export default function App() {
+  const [loading, setLoading] = useState(true);
+
+  // Ladebildschirm: so lange das Glas-Reveal läuft, danach Vorhang nach oben zum Hero
+  useEffect(() => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const ms = reduce ? 1200 : (glassRevealDuration("dark") + 0.4) * 1000;
+    const root = document.documentElement;
+    root.style.overflow = "hidden";
+    window.scrollTo(0, 0);
+    const t = window.setTimeout(() => setLoading(false), ms);
+    return () => {
+      window.clearTimeout(t);
+      root.style.overflow = "";
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!loading) document.documentElement.style.overflow = "";
+  }, [loading]);
+
   return (
     <main className="bg-ink">
-      <div id="studio">
-        <PrismaHero />
+      <AnimatePresence>
+        {loading && (
+          <motion.div
+            key="loader"
+            className="fixed inset-0 z-50 bg-ink"
+            initial={{ clipPath: "inset(0% 0% 0% 0%)" }}
+            exit={{ clipPath: "inset(0% 0% 100% 0%)" }}
+            transition={{ duration: 1, ease: EASE }}
+          >
+            <FismetGlassReveal className="h-full w-full" />
+            <p className="pointer-events-none absolute inset-x-0 bottom-8 text-center font-mono text-[10px] uppercase tracking-[0.4em] text-primary/40">
+              Fismet Webdesign
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.div
+        id="studio"
+        initial={{ scale: 1.08, filter: "blur(12px)" }}
+        animate={loading ? {} : { scale: 1, filter: "blur(0px)" }}
+        transition={{ duration: 1.2, ease: EASE }}
+      >
+        <PrismaHero ready={!loading} />
+      </motion.div>
+
+      <section id="leistungen" className="px-2 pb-2 pt-24 md:px-3 md:pt-32">
+        <div className="mb-10 grid gap-6 px-2 md:mb-14 md:grid-cols-12 md:px-7">
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-primary/50 md:col-span-3">Fismet in Zahlen</p>
+          <h2 className="text-4xl font-medium leading-[0.95] tracking-[-0.04em] text-primary sm:text-6xl md:col-span-9">
+            Schnell, mobil, sauber gebaut
+            <span className="text-primary/40"> – Websites, die liefern.</span>
+          </h2>
+        </div>
+        <div id="projekte" className="h-[80svh] min-h-[460px] overflow-hidden rounded-2xl md:h-[100svh] md:rounded-[2rem]">
+          <WarpCarousel background="#0b0b0a" ariaLabel="Fismet in Zahlen" style={{ width: "100%", height: "100%" }} />
+        </div>
+      </section>
+
+      <div id="team" className="mt-24 md:mt-32">
+        <HalftoneWordmarkFooter
+          id="kontakt"
+          wordmark="fismet"
+          label="Fismet Webdesign"
+          meta="© 2026 · Pierre & Abderrahman"
+          palette={{ background: "#0b0b0a", ink: "#e1e0cc", warm: "#e9762b" }}
+          backToTopLabel="Nach oben ↑"
+          columns={[
+            {
+              title: "Studio",
+              links: [
+                { label: "Leistungen", href: "#leistungen" },
+                { label: "Projekte", href: "#projekte" },
+                { label: "Team", href: "#team" },
+              ],
+            },
+            {
+              title: "Kontakt",
+              links: [
+                { label: "hallo@fismet.de", href: "mailto:hallo@fismet.de" },
+                { label: "Instagram", href: "#" },
+              ],
+            },
+            {
+              title: "Rechtliches",
+              links: [
+                { label: "Impressum", href: "#" },
+                { label: "Datenschutz", href: "#" },
+              ],
+            },
+          ]}
+        />
       </div>
-
-      <PerspectiveTunnelHero />
-
-      <StackSpread />
-
-      {/* Platzhalter-Footer – Team & Kontakt */}
-      <footer id="kontakt" className="px-4 py-20 sm:px-6 md:px-10 md:py-28">
-        <div id="team" className="grid gap-12 md:grid-cols-12">
-          <div className="md:col-span-7">
-            <p className="mb-6 font-mono text-xs uppercase tracking-[0.3em] text-primary/50">Kontakt</p>
-            <h2 className="text-5xl font-medium leading-[0.9] tracking-[-0.05em] text-primary sm:text-7xl md:text-8xl">
-              Lass uns was
-              <br />
-              bauen<span className="text-primary/40">.</span>
-            </h2>
-            <a
-              href="mailto:hallo@fismet.de"
-              className="group mt-10 inline-flex items-center gap-3 text-lg text-primary/80 transition-colors hover:text-primary sm:text-2xl"
-            >
-              hallo@fismet.de
-              <ArrowUpRight className="h-5 w-5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-            </a>
-          </div>
-          <div className="flex flex-col justify-end gap-6 md:col-span-5">
-            {[
-              { name: "Pierre", role: "Design & Konzept" },
-              { name: "Abderrahman", role: "Entwicklung & Technik" },
-            ].map((p) => (
-              <div key={p.name} className="flex items-baseline justify-between border-t border-primary/15 pt-4">
-                <span className="text-2xl tracking-tight text-primary">{p.name}</span>
-                <span className="text-sm text-primary/50">{p.role}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="mt-20 flex flex-wrap justify-between gap-4 border-t border-primary/15 pt-6 text-xs text-primary/40">
-          <span>© {new Date().getFullYear()} Fismet Webdesign</span>
-          <span>Impressum · Datenschutz</span>
-        </div>
-      </footer>
     </main>
   );
 }

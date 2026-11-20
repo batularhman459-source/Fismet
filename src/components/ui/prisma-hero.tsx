@@ -8,9 +8,11 @@ interface WordsPullUpProps {
   className?: string;
   showAsterisk?: boolean;
   style?: React.CSSProperties;
+  /** Animation erst starten, wenn true */
+  play?: boolean;
 }
 
-export const WordsPullUp = ({ text, className = "", showAsterisk = false, style }: WordsPullUpProps) => {
+export const WordsPullUp = ({ text, className = "", showAsterisk = false, style, play = true }: WordsPullUpProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true });
   const words = text.split(" ");
@@ -23,7 +25,7 @@ export const WordsPullUp = ({ text, className = "", showAsterisk = false, style 
           <motion.span
             key={i}
             initial={{ y: 20, opacity: 0 }}
-            animate={isInView ? { y: 0, opacity: 1 } : {}}
+            animate={isInView && play ? { y: 0, opacity: 1 } : {}}
             transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
             className="relative inline-block"
             style={{ marginRight: isLast ? 0 : "0.25em" }}
@@ -94,6 +96,8 @@ export interface PrismaHeroProps {
   navItems?: NavItem[];
   videoSrc?: string;
   posterSrc?: string;
+  /** Animationen erst starten, wenn true (z. B. nach dem Ladebildschirm) */
+  ready?: boolean;
 }
 
 const DEFAULT_NAV: NavItem[] = [
@@ -112,7 +116,9 @@ const PrismaHero = ({
   navItems = DEFAULT_NAV,
   videoSrc = "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_170732_8a9ccda6-5cff-4628-b164-059c500a2b41.mp4",
   posterSrc = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80",
+  ready = true,
 }: PrismaHeroProps) => {
+  const shown = { y: 0, opacity: 1 };
   return (
     <section className="h-[100svh] w-full p-2 md:p-3">
       <div className="relative h-full w-full overflow-hidden rounded-2xl bg-neutral-900 md:rounded-[2rem]">
@@ -153,14 +159,14 @@ const PrismaHero = ({
           <div className="grid grid-cols-12 items-end gap-4">
             <div className="col-span-12 lg:col-span-8">
               <h1 className="font-medium leading-[0.85] tracking-[-0.07em] text-primary text-[26vw] sm:text-[24vw] md:text-[22vw] lg:text-[19vw]">
-                <WordsPullUp text={title} showAsterisk />
+                <WordsPullUp text={title} showAsterisk play={ready} />
               </h1>
             </div>
 
             <div className="col-span-12 flex flex-col gap-5 pb-6 lg:col-span-4 lg:pb-10">
               <motion.p
                 initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
+                animate={ready ? shown : {}}
                 transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 className="max-w-md text-xs text-primary/70 sm:text-sm md:text-base"
                 style={{ lineHeight: 1.25 }}
@@ -171,7 +177,7 @@ const PrismaHero = ({
               <motion.a
                 href={ctaHref}
                 initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
+                animate={ready ? shown : {}}
                 transition={{ duration: 0.8, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
                 className="group inline-flex items-center gap-2 self-start rounded-full bg-primary py-1 pl-5 pr-1 text-sm font-medium text-black transition-all hover:gap-3 sm:text-base"
               >
