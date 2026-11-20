@@ -5,6 +5,7 @@ import FeaturesWithPanel from "@/components/ui/features-with-panel";
 import HalftoneWordmarkFooter from "@/components/ui/halftone-wordmark-footer";
 import { FISMET_LOADER_TUNING, FismetGlassReveal } from "@/components/ui/liquid-glass-logo-reveal";
 import { DEFAULT_LAYERS, ParallaxComponent } from "@/components/ui/parallax-scrolling";
+import { SvgPathDrawingTextAnimation } from "@/components/ui/path-drawing-portfolio-hero";
 import StackSpread from "@/components/ui/stack-spread";
 import { Component as KineticNavigation } from "@/components/ui/sterling-gate-kinetic-navigation";
 import { setScrollLocked } from "@/lib/scroll-lock";
@@ -87,6 +88,25 @@ export default function App() {
           title="Fismet"
           ready={!loading}
           layers={{ back: DEFAULT_LAYERS.back, middle: DEFAULT_LAYERS.middle, front: HERO_FRONT }}
+          titleNode={
+            <SvgPathDrawingTextAnimation
+              text="Fismet"
+              play={!loading}
+              loop={false}
+              fitToText
+              fillAfterDraw
+              fromColor="#1c57e1"
+              toColor="#2d7dfb"
+              fontFamily="Inter, ui-sans-serif, system-ui, sans-serif"
+              fontWeight={700}
+              letterSpacing="-0.065em"
+              fontSize={200}
+              strokeWidth={2.5}
+              durationSec={2.4}
+              fillDurationSec={1}
+              respectReducedMotion={false}
+            />
+          }
         >
           <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
             <motion.img

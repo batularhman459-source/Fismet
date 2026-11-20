@@ -8,6 +8,8 @@ import { registerLenis } from "@/lib/scroll-lock";
 
 export interface ParallaxComponentProps {
   title?: string;
+  /** Eigener Inhalt statt des Titel-Texts (z. B. animierter Schriftzug) */
+  titleNode?: React.ReactNode;
   /** Bild-Ebenen von hinten nach vorne: back und middle hinter dem Titel, front davor (optional) */
   layers?: { back: string; middle: string; front?: string };
   /** Inhalt des zweiten Bildschirms unter dem Parallax-Header */
@@ -51,6 +53,7 @@ const PARALLAX_CSS = `
   transition: opacity 1.1s cubic-bezier(.16,1,.3,1), transform 1.1s cubic-bezier(.16,1,.3,1);
 }
 .parallax__title[data-ready="false"] { opacity: 0; transform: translateY(12%); }
+.parallax__title--custom { width: min(86vw, 78rem); margin: 0; }
 .parallax__title sup { position: absolute; top: .18em; right: -.32em; font-size: .3em; letter-spacing: 0; }
 .parallax__fade {
   z-index: 30; position: absolute; left: 0; bottom: 0; width: 100%; height: 20%;
@@ -64,6 +67,7 @@ const PARALLAX_CSS = `
 
 export function ParallaxComponent({
   title = "Fismet",
+  titleNode,
   layers = DEFAULT_LAYERS,
   children,
   smoothScroll = true,
@@ -137,10 +141,16 @@ export function ParallaxComponent({
             <img src={layers.back} loading="eager" width="800" data-parallax-layer="1" alt="" className="parallax__layer-img" />
             <img src={layers.middle} loading="eager" width="800" data-parallax-layer="2" alt="" className="parallax__layer-img" />
             <div data-parallax-layer="3" className="parallax__layer-title">
-              <h1 className="parallax__title" data-ready={ready ? "true" : "false"}>
-                {title}
-                <sup>*</sup>
-              </h1>
+              {titleNode ? (
+                <h1 className="parallax__title parallax__title--custom" aria-label={title}>
+                  {titleNode}
+                </h1>
+              ) : (
+                <h1 className="parallax__title" data-ready={ready ? "true" : "false"}>
+                  {title}
+                  <sup>*</sup>
+                </h1>
+              )}
             </div>
             {layers.front ? (
               <img src={layers.front} loading="eager" width="800" data-parallax-layer="4" alt="" className="parallax__layer-img" />
