@@ -5,6 +5,7 @@ import HalftoneWordmarkFooter from "@/components/ui/halftone-wordmark-footer";
 import { FismetGlassReveal, glassRevealDuration } from "@/components/ui/liquid-glass-logo-reveal";
 import { PrismaHero } from "@/components/ui/prisma-hero";
 import StackSpread from "@/components/ui/stack-spread";
+import { Component as KineticNavigation } from "@/components/ui/sterling-gate-kinetic-navigation";
 
 const EASE = [0.76, 0, 0.24, 1] as const;
 
@@ -31,6 +32,16 @@ export default function App() {
 
   return (
     <main className="bg-ink">
+      <KineticNavigation
+        hidden={loading}
+        meta={
+          <>
+            <a href="mailto:hallo@fismet.de">hallo@fismet.de</a>
+            <span>Pierre &amp; Abderrahman</span>
+          </>
+        }
+      />
+
       <AnimatePresence>
         {loading && (
           <motion.div
