@@ -7,6 +7,7 @@ import { FISMET_LOADER_TUNING, FismetGlassReveal } from "@/components/ui/liquid-
 import { DEFAULT_LAYERS, ParallaxComponent } from "@/components/ui/parallax-scrolling";
 import { SvgPathDrawingTextAnimation } from "@/components/ui/path-drawing-portfolio-hero";
 import StackSpread from "@/components/ui/stack-spread";
+import { CONTACT, ContactSection, LegalOverlay, ProcessSection, TeamSection } from "@/components/sections/fismet-sections";
 import { Component as KineticNavigation } from "@/components/ui/sterling-gate-kinetic-navigation";
 import { setScrollLocked } from "@/lib/scroll-lock";
 
@@ -48,7 +49,7 @@ export default function App() {
         logo="Fismet Webdesign"
         meta={
           <>
-            <a href="mailto:hallo@fismet.de">hallo@fismet.de</a>
+            <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
             <span>Pierre &amp; Abderrahman</span>
           </>
         }
@@ -155,11 +156,17 @@ export default function App() {
 
       <StackSpread />
 
-      <FeaturesWithPanel id="leistungen" />
+      {/* Alles nach der Live-Sektion: gemeinsamer Bereich für den späteren Hintergrund */}
+      <div id="nach-live" className="relative isolate">
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10" data-background-slot />
 
-      <div id="team" className="mt-8 md:mt-16">
+        <FeaturesWithPanel id="leistungen" />
+        <ProcessSection id="ablauf" />
+        <TeamSection id="team" />
+        <ContactSection id="kontakt" />
+
         <HalftoneWordmarkFooter
-          id="kontakt"
+          id="footer"
           wordmark="fismet"
           label="Fismet Webdesign"
           meta="© 2026 · Pierre & Abderrahman"
@@ -172,28 +179,32 @@ export default function App() {
             {
               title: "Studio",
               links: [
-                { label: "Leistungen", href: "#leistungen" },
                 { label: "Projekte", href: "#projekte" },
-                { label: "Team", href: "#team" },
+                { label: "Leistungen", href: "#leistungen" },
+                { label: "Ablauf", href: "#ablauf" },
+                { label: "Über uns", href: "#team" },
               ],
             },
             {
               title: "Kontakt",
               links: [
-                { label: "hallo@fismet.de", href: "mailto:hallo@fismet.de" },
-                { label: "Instagram", href: "#" },
+                { label: CONTACT.email, href: `mailto:${CONTACT.email}` },
+                { label: CONTACT.phone, href: `tel:${CONTACT.phone.replace(/\s/g, "")}` },
+                { label: "Instagram", href: CONTACT.instagram },
               ],
             },
             {
               title: "Rechtliches",
               links: [
-                { label: "Impressum", href: "#" },
-                { label: "Datenschutz", href: "#" },
+                { label: "Impressum", href: "#impressum" },
+                { label: "Datenschutz", href: "#datenschutz" },
               ],
             },
           ]}
         />
       </div>
+
+      <LegalOverlay />
     </main>
   );
 }

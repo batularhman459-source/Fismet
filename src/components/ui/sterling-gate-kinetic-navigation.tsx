@@ -31,10 +31,10 @@ export interface KineticNavigationProps {
 }
 
 const DEFAULT_LINKS: KineticNavLink[] = [
-  { label: "Über uns", href: "#studio" },
   { label: "Projekte", href: "#projekte" },
   { label: "Leistungen", href: "#leistungen" },
-  { label: "Team", href: "#team" },
+  { label: "Ablauf", href: "#ablauf" },
+  { label: "Über uns", href: "#team" },
   { label: "Kontakt", href: "#kontakt" },
 ];
 
