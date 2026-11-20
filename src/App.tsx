@@ -12,6 +12,7 @@ import { setScrollLocked } from "@/lib/scroll-lock";
 const EASE = [0.76, 0, 0.24, 1] as const;
 const LOGO_MARK = `${import.meta.env.BASE_URL}fismet-mark.png`;
 const LOGO_MARK_HD = `${import.meta.env.BASE_URL}fismet-mark-hd.png`;
+const HERO_FRONT = `${import.meta.env.BASE_URL}hero-front.webp`;
 
 // Akzentfarben aus dem Logo
 export const ACCENT = "#2d7dfb";
@@ -80,12 +81,12 @@ export default function App() {
         animate={loading ? {} : { scale: 1, filter: "blur(0px)" }}
         transition={{ duration: 1.2, ease: EASE }}
       >
-        {/* Vordere Ebene (mit der Person) weggelassen */}
+        {/* Vordere Ebene lokal, ohne die Person */}
         <ParallaxComponent
           id="studio"
           title="Fismet"
           ready={!loading}
-          layers={{ back: DEFAULT_LAYERS.back, middle: DEFAULT_LAYERS.middle }}
+          layers={{ back: DEFAULT_LAYERS.back, middle: DEFAULT_LAYERS.middle, front: HERO_FRONT }}
         >
           <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
             <motion.img
