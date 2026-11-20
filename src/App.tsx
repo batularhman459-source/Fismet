@@ -8,7 +8,8 @@ import StackSpread from "@/components/ui/stack-spread";
 import { Component as KineticNavigation } from "@/components/ui/sterling-gate-kinetic-navigation";
 
 const EASE = [0.76, 0, 0.24, 1] as const;
-const LOGO_SRC = `${import.meta.env.BASE_URL}fismet-logo.png`;
+const LOGO_HEADER = `${import.meta.env.BASE_URL}fismet-logo-horizontal.png`;
+const LOGO_MARK = `${import.meta.env.BASE_URL}fismet-mark.png`;
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -43,7 +44,7 @@ export default function App() {
     <main className="bg-ink">
       <KineticNavigation
         hidden={loading}
-        logoSrc={LOGO_SRC}
+        logoSrc={LOGO_HEADER}
         logo="Fismet Webdesign"
         meta={
           <>
@@ -64,10 +65,10 @@ export default function App() {
           >
             <FismetGlassReveal
               className="h-full w-full"
-              logo={LOGO_SRC}
+              logo={LOGO_MARK}
               originalColors
-              logoScale={0.62}
-              finalScale={0.9}
+              logoScale={0.66}
+              finalScale={0.95}
               onRevealStart={onRevealStart}
               respectReducedMotion={false}
             />
