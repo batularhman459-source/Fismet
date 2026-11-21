@@ -105,7 +105,7 @@ export function ContactSection({ id = "kontakt" }: { id?: string }) {
 
         {/* Handy: Formular zuerst, Kontaktdaten darunter */}
         <Reveal className="order-first lg:order-none lg:col-span-8" delay={0.1}>
-          <OnboardingForm email={CONTACT.email} />
+          <OnboardingForm email={CONTACT.email} className="max-w-none" />
         </Reveal>
       </div>
     </section>

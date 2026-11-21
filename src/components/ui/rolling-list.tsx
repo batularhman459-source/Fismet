@@ -5,8 +5,9 @@ export interface ListItem {
   id: number;
   title: string;
   color: "blue";
-  /** Position am Desktop (Abstand von links in %) */
-  left: string;
+  /** Seite am Desktop und Abstand zum Rand (in %), leicht unterschiedlich für einen lockeren Look */
+  side: "left" | "right";
+  inset: string;
   /** Abstand nach oben zum vorherigen Wort (Tailwind-Klassen, bewusst unterschiedlich) */
   gap?: string;
 }
@@ -18,24 +19,24 @@ const colorClassMap: Record<ListItem["color"], string> = {
 
 // Zickzack: links, rechts, links, rechts, bewusst unregelmäßig
 export const DEFAULT_ROLLING_ITEMS: ListItem[] = [
-  { id: 1, title: "Kennenlernen", color: "blue", left: "2%" },
-  { id: 2, title: "Design", color: "blue", left: "58%", gap: "mt-14 md:mt-16" },
-  { id: 3, title: "Entwicklung", color: "blue", left: "9%", gap: "mt-20 md:mt-28" },
-  { id: 4, title: "Launch", color: "blue", left: "66%", gap: "mt-12 md:mt-20" },
+  { id: 1, title: "Kennenlernen", color: "blue", side: "left", inset: "0%" },
+  { id: 2, title: "Design", color: "blue", side: "right", inset: "3%", gap: "mt-14 md:mt-16" },
+  { id: 3, title: "Entwicklung", color: "blue", side: "left", inset: "5%", gap: "mt-20 md:mt-28" },
+  { id: 4, title: "Launch", color: "blue", side: "right", inset: "0%", gap: "mt-12 md:mt-20" },
 ];
 
-function RollingTextItem({ item, index, innerRef }: { item: ListItem; index: number; innerRef: (el: HTMLDivElement | null) => void }) {
-  const right = index % 2 === 1;
+function RollingTextItem({ item, innerRef }: { item: ListItem; innerRef: (el: HTMLDivElement | null) => void }) {
+  const right = item.side === "right";
   return (
     <div
       ref={innerRef}
       className={cn(
-        "group relative w-fit cursor-default md:[margin-left:var(--left)]",
-        // Handy: abwechselnd links / rechts
-        right ? "self-end md:self-auto" : "self-start",
+        "group relative w-fit cursor-default",
+        // abwechselnd links / rechts, am Desktop mit leicht unterschiedlichem Randabstand
+        right ? "self-end md:[margin-right:var(--inset)]" : "self-start md:[margin-left:var(--inset)]",
         item.gap,
       )}
-      style={{ ["--left" as string]: item.left }}
+      style={{ ["--inset" as string]: item.inset }}
     >
       {/* feste Innenabstände rechts, damit die kursive Hover-Schrift nicht abgeschnitten wird */}
       <div className="relative h-12 overflow-hidden pr-4 sm:h-[60px] md:h-20 md:pr-7">
@@ -81,14 +82,26 @@ function useArrows(container: React.RefObject<HTMLDivElement | null>, items: Rea
         const b = rects[i + 1];
         const goesRight = b.l + b.w / 2 > a.l + a.w / 2;
         // Start unter dem Wort, Ende über dem nächsten, jeweils etwas zur Mitte versetzt
-        const sx = goesRight ? a.l + a.w * 0.62 : a.l + a.w * 0.3;
-        const sy = a.b + 8;
-        const ex = goesRight ? b.l + b.w * 0.28 : b.l + b.w * 0.7;
-        const ey = b.t - 10;
-        const dy = ey - sy;
-        // weicher S-Bogen, endet senkrecht nach unten
-        const d = `M ${sx} ${sy} C ${sx} ${sy + dy * 0.75}, ${ex} ${ey - dy * 0.55}, ${ex} ${ey}`;
-        const head = `M ${ex - 5} ${ey - 7} L ${ex} ${ey} L ${ex + 5} ${ey - 7}`;
+        const sx = goesRight ? a.l + a.w * 0.72 : a.l + a.w * 0.28;
+        const sy = a.b + 10;
+        const sideX = goesRight ? b.l - 18 : b.l + b.w + 2;
+        let d: string;
+        let head: string;
+        if (Math.abs(sideX - sx) > 140) {
+          // genug Platz (Desktop): Bogen nach unten, dann waagerecht seitlich ins Wort
+          const ex = sideX;
+          const ey = (b.t + b.b) / 2 - 6;
+          d = `M ${sx} ${sy} C ${sx} ${sy + (ey - sy) * 0.85}, ${sx + (ex - sx) * 0.35} ${ey}, ${ex} ${ey}`;
+          const dir = goesRight ? 1 : -1;
+          head = `M ${ex + dir * 9} ${ey} L ${ex - dir * 2} ${ey - 5} L ${ex - dir * 2} ${ey + 5} Z`;
+        } else {
+          // wenig Platz (Handy): S-Bogen, endet von oben auf dem nächsten Wort
+          const ex = goesRight ? b.l + b.w * 0.3 : b.l + b.w * 0.7;
+          const ey = b.t - 12;
+          const dy = ey - sy;
+          d = `M ${sx} ${sy} C ${sx} ${sy + dy * 0.6}, ${ex} ${ey - dy * 0.6}, ${ex} ${ey}`;
+          head = `M ${ex} ${ey + 9} L ${ex - 5} ${ey - 2} L ${ex + 5} ${ey - 2} Z`;
+        }
         next.push({ d, head });
       }
       setArrows(next);
@@ -115,7 +128,7 @@ function RollingTextList({ items = DEFAULT_ROLLING_ITEMS, className }: { items?:
     <div ref={containerRef} className={cn("relative flex w-full flex-col py-4", className)}>
       <svg
         aria-hidden
-        className="pointer-events-none absolute inset-0 text-primary/35"
+        className="pointer-events-none absolute inset-0 text-primary/70"
         width={size.w}
         height={size.h}
         viewBox={`0 0 ${size.w || 1} ${size.h || 1}`}
@@ -123,8 +136,8 @@ function RollingTextList({ items = DEFAULT_ROLLING_ITEMS, className }: { items?:
       >
         {arrows.map((a, i) => (
           <g key={i}>
-            <path d={a.d} stroke="currentColor" strokeWidth="1.5" strokeDasharray="5 6" strokeLinecap="round" />
-            <path d={a.head} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d={a.d} stroke="currentColor" strokeWidth="1.75" strokeDasharray="2 7" strokeLinecap="round" />
+            <path d={a.head} fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
           </g>
         ))}
       </svg>
@@ -132,7 +145,6 @@ function RollingTextList({ items = DEFAULT_ROLLING_ITEMS, className }: { items?:
         <RollingTextItem
           key={item.id}
           item={item}
-          index={i}
           innerRef={(el) => {
             itemRefs.current[i] = el;
           }}
