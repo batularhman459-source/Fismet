@@ -10,6 +10,8 @@ export interface ListItem {
   inset: string;
   /** Abstand nach oben zum vorherigen Wort (Tailwind-Klassen, bewusst unterschiedlich) */
   gap?: string;
+  /** Zusätzliche Klassen nur fürs Handy (z. B. etwas vom Rand weg) */
+  mobileClass?: string;
 }
 
 const colorClassMap: Record<ListItem["color"], string> = {
@@ -20,9 +22,9 @@ const colorClassMap: Record<ListItem["color"], string> = {
 // Zickzack: links, rechts, links, rechts, bewusst unregelmäßig
 export const DEFAULT_ROLLING_ITEMS: ListItem[] = [
   { id: 1, title: "Kennenlernen", color: "blue", side: "left", inset: "0%" },
-  { id: 2, title: "Design", color: "blue", side: "right", inset: "3%", gap: "mt-14 md:mt-16" },
-  { id: 3, title: "Entwicklung", color: "blue", side: "left", inset: "5%", gap: "mt-20 md:mt-28" },
-  { id: 4, title: "Launch", color: "blue", side: "right", inset: "0%", gap: "mt-12 md:mt-20" },
+  { id: 2, title: "Design", color: "blue", side: "right", inset: "3%", gap: "mt-24 md:mt-16" },
+  { id: 3, title: "Entwicklung", color: "blue", side: "left", inset: "5%", gap: "mt-28 md:mt-28" },
+  { id: 4, title: "Launch", color: "blue", side: "right", inset: "0%", gap: "mt-24 md:mt-20", mobileClass: "mr-10 md:mr-0" },
 ];
 
 function RollingTextItem({ item, innerRef }: { item: ListItem; innerRef: (el: HTMLDivElement | null) => void }) {
@@ -35,6 +37,7 @@ function RollingTextItem({ item, innerRef }: { item: ListItem; innerRef: (el: HT
         // abwechselnd links / rechts, am Desktop mit leicht unterschiedlichem Randabstand
         right ? "self-end md:[margin-right:var(--inset)]" : "self-start md:[margin-left:var(--inset)]",
         item.gap,
+        item.mobileClass,
       )}
       style={{ ["--inset" as string]: item.inset }}
     >
@@ -125,7 +128,7 @@ function RollingTextList({ items = DEFAULT_ROLLING_ITEMS, className }: { items?:
   const { arrows, size } = useArrows(containerRef, itemRefs);
 
   return (
-    <div ref={containerRef} className={cn("relative flex w-full flex-col py-4", className)}>
+    <div ref={containerRef} className={cn("relative flex w-full flex-col pb-8 pt-10 md:py-4", className)}>
       <svg
         aria-hidden
         className="pointer-events-none absolute inset-0 text-primary/70"
