@@ -22,16 +22,16 @@ export const DEFAULT_CARDS: StackSpreadCard[] = [
     item: { src: shot("zautomobile"), alt: "Website von Z Automobile", label: "Z Automobile", href: "https://zautomobile.autos" },
     stackOffset: { x: -4, y: -3 },
     stackRotate: -7,
-    target: { x: -24, y: -23, rotate: 0, scale: 1, w: 30, h: 30 },
-    targetSm: { x: 0, y: -30 },
+    target: { x: -36, y: -9, rotate: 0, scale: 1, w: 24, h: 30, aspect: 1.6 },
+    targetSm: { x: 0, y: -26 },
     z: 2,
   },
   {
     item: { src: shot("purodetail"), alt: "Website von Puro Detail", label: "Puro Detail", href: "https://purodetail.vercel.app" },
     stackOffset: { x: 4, y: 3 },
     stackRotate: 6,
-    target: { x: 24, y: 23, rotate: 0, scale: 1, w: 30, h: 30 },
-    targetSm: { x: 0, y: 30 },
+    target: { x: 36, y: 11, rotate: 0, scale: 1, w: 24, h: 30, aspect: 1.6 },
+    targetSm: { x: 0, y: 29 },
     z: 3,
   },
 ];
@@ -56,7 +56,7 @@ const RESPONSIVE = {
     card: null as { w: number; h: number } | null,
   },
   // Handy: zwei breite Karten über und unter dem Text
-  small: { scale: 1, small: true, colX: 22, card: { w: 84, h: 22 } },
+  small: { scale: 1, small: true, colX: 22, card: { w: 80, h: 22 } },
 };
 
 function useResponsive() {
@@ -120,6 +120,8 @@ export interface StackSpreadTarget {
   scale?: number;
   w: number;
   h: number;
+  /** Seitenverhältnis (Breite/Höhe); wenn gesetzt, wird h ignoriert und die Höhe aus der Breite berechnet */
+  aspect?: number;
 }
 
 export interface StackSpreadCard {
@@ -161,8 +163,10 @@ function Card({
   const { item, target } = card;
 
   const flat = reduce === true;
-  const stackRotate = flat ? 0 : clusterRotation ? card.stackRotate ?? 0 : 0;
-  const stackOffset = card.stackOffset ?? { x: 0, y: 0 };
+  const sm0 = isSmall && card.targetSm ? card.targetSm : null;
+  // Handy: ruhiger Start nahe der Endposition, ohne Drehung
+  const stackRotate = flat || sm0 ? 0 : clusterRotation ? card.stackRotate ?? 0 : 0;
+  const stackOffset = sm0 ? { x: 0, y: sm0.y * 0.93 } : card.stackOffset ?? { x: 0, y: 0 };
   const restScale = scaleMul ?? target.scale ?? 1;
 
   const sm = isSmall && card.targetSm ? card.targetSm : null;
@@ -179,18 +183,22 @@ function Card({
     return `calc(-50% + ${dx}vw) calc(-50% + ${dy}vh)`;
   });
   const rotate = useTransform(progress, [0, 1], [stackRotate, endRotate]);
-  const scale = useTransform(progress, [0, 1], [stackScale, restScale]);
+  const scale = useTransform(progress, [0, 1], [isSmall ? 0.94 : stackScale, restScale]);
+  const opacity = useTransform(progress, [0, 0.45], isSmall ? [0, 1] : [1, 1]);
+  const aspect = target.aspect;
 
   return (
     <motion.div
       className="absolute left-1/2 top-1/2 will-change-transform"
       style={{
         width: `${fixedCard ? fixedCard.w : target.w}vw`,
-        height: `${fixedCard ? fixedCard.h : target.h}vh`,
+        height: aspect ? "auto" : `${fixedCard ? fixedCard.h : target.h}vh`,
+        aspectRatio: aspect ? String(aspect) : undefined,
         zIndex: card.z ?? 1,
         translate,
         rotate,
         scale,
+        opacity,
       }}
     >
       <CardFace item={item} cardRadius={cardRadius} />
@@ -274,7 +282,8 @@ export default function StackSpread({
   const pointer = usePointerParallax(spread, parallaxEnabled);
 
   const noScale = reduce === true;
-  const copyOpacity = useTransform(progress, [textFadeStart, textFadeStart + 0.35], [0, 1]);
+  // Handy: Titel sofort sichtbar, die Karten gleiten um ihn herum
+  const copyOpacity = useTransform(progress, [textFadeStart, textFadeStart + 0.35], isSmall ? [1, 1] : [0, 1]);
   const copyScale = useTransform(progress, [textFadeStart, 0.9], [0.85, 1]);
   const hintOpacity = useTransform(progress, [0, SCATTER_START], [1, 0]);
 
@@ -289,7 +298,7 @@ export default function StackSpread({
         {/* Text in der Mitte */}
         <motion.div
           className="pointer-events-none absolute inset-0 z-[5] flex flex-col items-center justify-center px-6 text-center max-md:px-8"
-          style={{ opacity: copyOpacity, scale: noScale ? 1 : copyScale }}
+          style={{ opacity: copyOpacity, scale: noScale || isSmall ? 1 : copyScale }}
         >
           <h2
             className="w-full text-[4.5vw] font-normal leading-none! tracking-tight max-md:text-[10vw]"
