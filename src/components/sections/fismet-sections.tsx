@@ -69,7 +69,8 @@ export function ContactSection({ id = "kontakt" }: { id?: string }) {
     <section id={id} className="px-4 py-24 sm:px-6 md:px-10 md:py-32">
       <SectionHead title="Lass uns über euer Projekt reden." muted="In zwei Minuten zur Anfrage." />
       <div className="grid gap-10 lg:grid-cols-12">
-        <Reveal className="lg:col-span-4">
+        {/* Desktop: oben bündig mit der Formular-Karte (unter den Fortschrittspunkten) */}
+        <Reveal className="lg:col-span-4 lg:pt-[84px]">
           <div className="flex flex-col gap-4">
             {[
               { icon: Mail, label: "E-Mail", value: CONTACT.email, href: `mailto:${CONTACT.email}` },
