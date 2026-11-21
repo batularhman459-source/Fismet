@@ -39,7 +39,7 @@ function SectionHead({ title, muted }: { title: string; muted?: string }) {
     <Reveal className="mb-14 md:mb-20">
       <h2 className="max-w-5xl text-4xl font-medium leading-[0.95] tracking-[-0.045em] text-primary sm:text-6xl">
         {title}
-        {muted ? <span className="text-primary/35"> {muted}</span> : null}
+        {muted ? <span className="block text-primary/35">{muted}</span> : null}
       </h2>
     </Reveal>
   );
@@ -52,7 +52,7 @@ function SectionHead({ title, muted }: { title: string; muted?: string }) {
 export function ProcessSection({ id = "ablauf" }: { id?: string }) {
   return (
     <section id={id} className="px-4 py-24 sm:px-6 md:px-10 md:py-32">
-      <SectionHead title="Von der Idee zur Website" muted="– in vier Schritten." />
+      <SectionHead title="Von der Idee zur Website" muted="In vier Schritten." />
       <Reveal>
         <RollingTextList />
       </Reveal>
@@ -98,12 +98,13 @@ export function ContactSection({ id = "kontakt" }: { id?: string }) {
               );
             })}
             <p className="mt-2 text-sm leading-relaxed text-primary/45">
-              Lieber direkt schreiben? Kein Problem – eine kurze Mail mit ein paar Infos zum Projekt reicht völlig.
+              Lieber direkt schreiben? Kein Problem, eine kurze Mail mit ein paar Infos zum Projekt reicht völlig.
             </p>
           </div>
         </Reveal>
 
-        <Reveal className="lg:col-span-8" delay={0.1}>
+        {/* Handy: Formular zuerst, Kontaktdaten darunter */}
+        <Reveal className="order-first lg:order-none lg:col-span-8" delay={0.1}>
           <OnboardingForm email={CONTACT.email} />
         </Reveal>
       </div>
@@ -120,7 +121,7 @@ const LEGAL: Record<string, { title: string; body: ReactNode }> = {
     title: "Impressum",
     body: (
       <>
-        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-accent">Platzhalter – vor dem Livegang ausfüllen</p>
+        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-accent">Platzhalter: vor dem Livegang ausfüllen</p>
         <h3>Angaben gemäß § 5 DDG</h3>
         <p>
           [Vorname Nachname / Firmenname]
@@ -146,9 +147,9 @@ const LEGAL: Record<string, { title: string; body: ReactNode }> = {
     title: "Datenschutz",
     body: (
       <>
-        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-accent">Platzhalter – vor dem Livegang ersetzen</p>
+        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-accent">Platzhalter: vor dem Livegang ersetzen</p>
         <p>
-          Hier kommt eure Datenschutzerklärung hin. Sie muss zu dem passen, was die Seite tatsächlich tut – z. B. Hosting,
+          Hier kommt eure Datenschutzerklärung hin. Sie muss zu dem passen, was die Seite tatsächlich tut, z. B. Hosting,
           Kontaktformular bzw. E-Mail-Kontakt und extern geladene Inhalte (Schriften, Bilder, Videos).
         </p>
         <p>Am einfachsten mit einem Datenschutz-Generator erstellen oder rechtlich prüfen lassen.</p>

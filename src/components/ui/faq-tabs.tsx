@@ -16,15 +16,15 @@ export const DEFAULT_FAQ: FaqCategory[] = [
     label: "Ablauf",
     items: [
       { q: "Wie läuft ein Projekt mit euch ab?", a: "Nach einem kurzen Kennenlernen erstellen wir ein Konzept und einen Design-Entwurf. Wenn ihr zufrieden seid, entwickeln wir die Seite, testen sie gründlich und bringen sie gemeinsam mit euch online." },
-      { q: "Wie lange dauert es bis zur fertigen Website?", a: "Eine typische Unternehmensseite dauert etwa zwei bis vier Wochen. Größere Projekte wie Shops brauchen entsprechend länger – den genauen Zeitplan legen wir am Anfang gemeinsam fest." },
-      { q: "Was müssen wir vorbereiten?", a: "Ideal sind Logo, Texte und Bilder. Falls etwas fehlt, ist das kein Problem – wir helfen bei Struktur und Texten und können passende Bilder vorschlagen." },
+      { q: "Wie lange dauert es bis zur fertigen Website?", a: "Eine typische Unternehmensseite dauert etwa zwei bis vier Wochen. Größere Projekte wie Shops brauchen entsprechend länger. Den genauen Zeitplan legen wir am Anfang gemeinsam fest." },
+      { q: "Was müssen wir vorbereiten?", a: "Ideal sind Logo, Texte und Bilder. Falls etwas fehlt, ist das kein Problem. Wir helfen bei Struktur und Texten und können passende Bilder vorschlagen." },
       { q: "Können wir während des Projekts noch Änderungen einbringen?", a: "Ja. Nach dem Design-Entwurf und vor dem Launch gibt es feste Feedback-Runden, in denen eure Wünsche einfließen." },
     ],
   },
   {
     label: "Kosten",
     items: [
-      { q: "Was kostet eine Website?", a: "Das hängt vom Umfang ab – Anzahl der Seiten, Funktionen und Inhalte. Nach einem kurzen Gespräch bekommt ihr ein transparentes Festpreis-Angebot." },
+      { q: "Was kostet eine Website?", a: "Das hängt vom Umfang ab: Anzahl der Seiten, Funktionen und Inhalte. Nach einem kurzen Gespräch bekommt ihr ein transparentes Festpreis-Angebot." },
       { q: "Gibt es laufende Kosten?", a: "Für Domain und Hosting fallen kleine monatliche Kosten an. Wartung und Updates bieten wir optional als Paket an." },
       { q: "Wie wird bezahlt?", a: "In der Regel in zwei Teilen: ein Teil zum Projektstart, der Rest zum Launch. Details stehen im Angebot." },
     ],
@@ -33,7 +33,7 @@ export const DEFAULT_FAQ: FaqCategory[] = [
     label: "Technik",
     items: [
       { q: "Funktioniert die Seite auch auf dem Handy?", a: "Ja, jede Seite wird für Handy, Tablet und Desktop gebaut und auf allen Größen getestet." },
-      { q: "Können wir Inhalte selbst ändern?", a: "Auf Wunsch richten wir euch eine einfache Möglichkeit ein, Texte und Bilder selbst zu pflegen – oder wir übernehmen das für euch." },
+      { q: "Können wir Inhalte selbst ändern?", a: "Auf Wunsch richten wir euch eine einfache Möglichkeit ein, Texte und Bilder selbst zu pflegen, oder wir übernehmen das für euch." },
       { q: "Werden wir bei Google gefunden?", a: "Wir achten von Anfang an auf schnelle Ladezeiten, saubere Struktur und technisches SEO. Das ist die Grundlage für gute Platzierungen." },
       { q: "Kümmert ihr euch um Domain und Hosting?", a: "Ja, wenn ihr möchtet, richten wir Domain, Hosting und E-Mail-Adressen für euch ein." },
     ],
@@ -73,8 +73,6 @@ export function FaqTabs({
 
   return (
     <section id={id} className={cn("relative px-4 py-24 sm:px-6 md:py-32", className)}>
-      {/* weicher Lichtschein hinter dem Titel */}
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[radial-gradient(ellipse_50%_60%_at_50%_0%,rgba(225,224,204,0.07),transparent)]" />
 
       <div className="relative mx-auto flex max-w-3xl flex-col items-center text-center">
         <p className="mb-4 text-sm font-medium text-primary/55">{eyebrow}</p>

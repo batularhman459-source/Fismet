@@ -98,7 +98,16 @@ const NAV_CSS = `
 .sg-nav .nav-close-btn:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
 
 /* Vollbild-Menü */
-.sg-nav .nav-overlay-wrapper { display: none; position: fixed; inset: 0; z-index: 55; }
+/* visibility statt display:none: das Menü ist schon fertig gelayoutet, das erste Öffnen ruckelt nicht */
+.sg-nav .nav-overlay-wrapper { visibility: hidden; position: fixed; inset: 0; z-index: 55; }
+.sg-nav .nav-overlay-wrapper .overlay { opacity: 0; }
+.sg-nav .menu-content, .sg-nav .backdrop-layer { will-change: transform; }
+@media (max-width: 640px) {
+  .sg-nav .nav-overlay-wrapper .menu-content { padding: 7rem 2.25rem 2.25rem 2.75rem; }
+  .sg-nav .nav-link-text { gap: .65em; }
+}
+/* Touch: keine Hover-Formen (spart Arbeit beim Öffnen) */
+@media (pointer: coarse) { .sg-nav .ambient-background-shapes { display: none; } }
 .sg-nav .overlay { position: absolute; inset: 0; background: rgba(11, 11, 10, .55); cursor: pointer; }
 .sg-nav .menu-content {
   position: absolute; top: 0; right: 0; bottom: 0; width: min(38rem, 100%);
@@ -245,7 +254,7 @@ export function Component({
         // OPEN
         if (navWrap) navWrap.setAttribute("data-nav", "open");
 
-        tl.set(navWrap, { display: "block" })
+        tl.set(navWrap, { visibility: "visible" })
           .set(menu, { xPercent: 0 }, "<")
           .fromTo(menuButtonTexts ?? [], { yPercent: 0 }, { yPercent: -100, stagger: 0.2 })
           .fromTo(menuButtonIcon ?? [], { rotate: 0 }, { rotate: 315 }, "<")
@@ -269,7 +278,7 @@ export function Component({
           .to(menu, { xPercent: 120 }, "<")
           .to(menuButtonTexts ?? [], { yPercent: 0 }, "<")
           .to(menuButtonIcon ?? [], { rotate: 0 }, "<")
-          .set(navWrap, { display: "none" });
+          .set(navWrap, { visibility: "hidden" });
       }
     }, containerRef);
 

@@ -55,6 +55,8 @@ const PARALLAX_CSS = `
 }
 .parallax__title[data-ready="false"] { opacity: 0; transform: translateY(12%); }
 .parallax__title--custom { width: min(86vw, 78rem); margin: 0; }
+/* Handy: Browser-Leisten überdecken den unteren Rand, daher optisch etwas höher setzen */
+@media (max-width: 767px) { .parallax__title--custom { transform: translateY(-9svh); } }
 .parallax__title sup { position: absolute; top: .18em; right: -.32em; font-size: .3em; letter-spacing: 0; }
 .parallax__fade {
   z-index: 30; position: absolute; left: 0; bottom: 0; width: 100%; height: 20%;

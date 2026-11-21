@@ -1,16 +1,10 @@
+import { Fragment } from "react";
 import { cn } from "@/lib/utils";
 
 export interface ListItem {
   id: number;
   title: string;
-  category: string;
-  src: string;
-  alt: string;
   color: "blue";
-}
-
-interface RollingTextItemProps {
-  item: ListItem;
 }
 
 const colorClassMap: Record<ListItem["color"], string> = {
@@ -18,18 +12,21 @@ const colorClassMap: Record<ListItem["color"], string> = {
   blue: "text-accent",
 };
 
-function RollingTextItem({ item }: RollingTextItemProps) {
-  return (
-    <div className="group relative w-full cursor-pointer border-b border-border py-6">
-      {/* Rolling text */}
-      <div className="relative h-12 overflow-hidden sm:h-[60px] md:h-20">
-        <div className="transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-1/2">
-          {/* State 1: Normal */}
-          <div className="flex h-12 items-center sm:h-[60px] md:h-20">
-            <h3 className="whitespace-nowrap text-4xl font-black uppercase tracking-tighter text-primary sm:text-5xl md:text-7xl">{item.title}</h3>
-          </div>
+/** Einrückung pro Schritt am Desktop (Treppe) */
+const STEP_INDENT = 12; // in %
 
-          {/* State 2: Hover (Italic + Color) */}
+function RollingTextItem({ item, index }: { item: ListItem; index: number }) {
+  return (
+    <div className="group relative w-fit cursor-default md:[margin-left:var(--indent)]" style={{ ["--indent" as string]: `${index * STEP_INDENT}%` }}>
+      <div className="relative h-12 overflow-hidden pr-4 md:pr-7 sm:h-[60px] md:h-20">
+        <div className="transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-1/2">
+          {/* Normal */}
+          <div className="flex h-12 items-center sm:h-[60px] md:h-20">
+            <h3 className="whitespace-nowrap text-4xl font-black uppercase tracking-tighter text-primary sm:text-5xl md:text-7xl">
+              {item.title}
+            </h3>
+          </div>
+          {/* Hover: kursiv + Blau */}
           <div className="flex h-12 items-center sm:h-[60px] md:h-20" aria-hidden>
             <h3 className={cn("whitespace-nowrap text-4xl font-black uppercase italic tracking-tighter sm:text-5xl md:text-7xl", colorClassMap[item.color])}>
               {item.title}
@@ -37,76 +34,55 @@ function RollingTextItem({ item }: RollingTextItemProps) {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
 
-      {/* Category Label */}
-      <span className="absolute right-0 top-8 hidden text-xs font-bold uppercase tracking-widest text-primary/40 transition-opacity duration-300 group-hover:opacity-0 md:block">
-        {item.category}
-      </span>
-
-      {/* Image Reveal Effect */}
-      <div
-        className={cn(
-          "pointer-events-none absolute right-0 top-1/2 z-20 hidden h-32 w-48 -translate-y-1/2 overflow-hidden rounded-lg shadow-2xl md:block",
-          "transition-all duration-500 ease-out",
-          "translate-x-4 rotate-3 scale-95 opacity-0",
-          "group-hover:translate-x-0 group-hover:rotate-0 group-hover:scale-100 group-hover:opacity-100",
-        )}
-      >
-        <div className="relative h-full w-full">
-          <img
-            src={item.src}
-            alt={item.alt}
-            loading="lazy"
-            className="absolute inset-0 h-full w-full object-cover grayscale transition-all duration-500 ease-out group-hover:grayscale-0"
+/** Gestrichelter Pfeil zur nächsten Phase */
+function DashedArrow({ index }: { index: number }) {
+  return (
+    <div aria-hidden className="relative text-primary/35">
+      {/* Handy: gerade nach unten */}
+      <svg className="ml-4 block h-14 w-6 md:hidden" viewBox="0 0 24 56" fill="none">
+        <path d="M12 4 V46" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 5" strokeLinecap="round" />
+        <path d="M6 41 L12 49 L18 41" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      {/* Desktop: geschwungen nach rechts unten zur nächsten Stufe */}
+      <div className="hidden h-20 md:block" style={{ marginLeft: `calc(${index * STEP_INDENT}% + 2.5rem)`, width: `${STEP_INDENT}%` }}>
+        <svg className="h-full w-full overflow-visible" viewBox="0 0 100 80" preserveAspectRatio="none" fill="none">
+          <path
+            d="M0 6 C 0 50, 40 64, 92 70"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeDasharray="5 6"
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
           />
-          <div className="absolute inset-0 bg-accent/15 mix-blend-overlay" />
-        </div>
+        </svg>
+        {/* Pfeilspitze (eigenes SVG, damit sie nicht verzerrt wird) */}
+        <svg className="absolute bottom-[6px] h-3 w-3" style={{ left: `calc(${index * STEP_INDENT}% + 2.5rem + ${STEP_INDENT}% - 0.85rem)` }} viewBox="0 0 12 12" fill="none">
+          <path d="M2 2 L10 6 L2 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </div>
     </div>
   );
 }
 
-// Platzhalter-Bilder – später durch eigene ersetzen
 export const DEFAULT_ROLLING_ITEMS: ListItem[] = [
-  {
-    id: 1,
-    title: "Kennenlernen",
-    category: "Tag 1",
-    src: "https://cdn.21st.dev/assets/mirror/47/4710b9d82fb5e24949919a6ec1a00738147367e369316b18c90092e2dc8fbd6f.jpg",
-    alt: "Erstes Gespräch",
-    color: "blue",
-  },
-  {
-    id: 2,
-    title: "Design",
-    category: "Woche 1–2",
-    src: "https://cdn.21st.dev/assets/mirror/a9/a90f49901bb0f47f7427f8c0d40734c44fa87e3ea50fe6578fb218ecf6d9e926.jpg",
-    alt: "Design-Entwurf",
-    color: "blue",
-  },
-  {
-    id: 3,
-    title: "Entwicklung",
-    category: "Woche 2–4",
-    src: "https://cdn.21st.dev/assets/mirror/f9/f9693912c046c9f085047375fc80177955f2ec175a2da779ad4a718718fedf63.jpg",
-    alt: "Programmierung",
-    color: "blue",
-  },
-  {
-    id: 4,
-    title: "Launch",
-    category: "ab Woche 4",
-    src: "https://cdn.21st.dev/assets/mirror/68/68043ddcb0b723a84f9c2fa6c581b74c3af46af745c21be5bf8d83c802c2780e.jpg",
-    alt: "Livegang",
-    color: "blue",
-  },
+  { id: 1, title: "Kennenlernen", color: "blue" },
+  { id: 2, title: "Design", color: "blue" },
+  { id: 3, title: "Entwicklung", color: "blue" },
+  { id: 4, title: "Launch", color: "blue" },
 ];
 
 function RollingTextList({ items = DEFAULT_ROLLING_ITEMS, className }: { items?: ListItem[]; className?: string }) {
   return (
-    <div className={cn("flex w-full flex-col", className)}>
-      {items.map((item) => (
-        <RollingTextItem key={item.id} item={item} />
+    <div className={cn("flex w-full flex-col py-4", className)}>
+      {items.map((item, i) => (
+        <Fragment key={item.id}>
+          <RollingTextItem item={item} index={i} />
+          {i < items.length - 1 ? <DashedArrow index={i} /> : null}
+        </Fragment>
       ))}
     </div>
   );

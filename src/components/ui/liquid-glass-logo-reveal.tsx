@@ -83,7 +83,8 @@ const LOOKS: Record<Look, Settings> = {
 /* ------------------------------------------------------------------ *
  * Logo → texture + signed distance field
  * ------------------------------------------------------------------ */
-const TEX = 1536 // Logo-Textur; höher = schärfer, aber mehr Speicher
+// Logo-Textur; höher = schärfer, aber mehr Rechenzeit beim Start (Handy: kleiner)
+const TEX = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches ? 1024 : 1536
 const BOX = 0.75
 
 interface LogoData {

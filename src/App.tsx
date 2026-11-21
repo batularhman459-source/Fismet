@@ -142,7 +142,7 @@ export default function App() {
               transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
               Wir bauen klare, schnelle Websites,
-              <span className="text-primary/40"> die nach euch aussehen und Besucher zu Kunden machen.</span>
+              <span className="block text-primary/40">die nach euch aussehen und Besucher zu Kunden machen.</span>
             </motion.p>
             <motion.div
               className="mt-10 flex flex-col items-center gap-4 sm:flex-row"

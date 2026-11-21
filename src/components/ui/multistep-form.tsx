@@ -152,7 +152,7 @@ const OnboardingForm = ({ email, className }: OnboardingFormProps) => {
     setTimeout(() => {
       window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
       toast.success("Fast geschafft!", {
-        description: `Euer Mailprogramm öffnet sich mit der fertigen Anfrage – nur noch absenden. Falls nicht: ${email}`,
+        description: `Euer Mailprogramm öffnet sich mit der fertigen Anfrage. Nur noch absenden. Falls nicht: ${email}`,
       });
       setIsSubmitting(false);
     }, 600);

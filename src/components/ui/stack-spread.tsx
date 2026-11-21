@@ -316,7 +316,7 @@ export default function StackSpread({
   textFadeStart = 0.3,
   showScrollHint = true,
   headline = ["Seiten,", "die", "live sind."],
-  subline = "Eine Auswahl unserer aktuellen Projekte – online, schnell und gebaut für echte Kunden.",
+  subline = "Eine Auswahl unserer aktuellen Projekte. Online, schnell und gebaut für echte Kunden.",
   id = "projekte",
 }: StackSpreadProps) {
   const wrapRef = useRef<HTMLElement>(null);
@@ -353,9 +353,6 @@ export default function StackSpread({
           className="pointer-events-none absolute inset-0 z-[5] flex flex-col items-center justify-center px-6 text-center max-md:px-8"
           style={{ opacity: copyOpacity, scale: noScale ? 1 : copyScale }}
         >
-          <p className="mb-[1vw] font-mono text-[0.75vw] uppercase tracking-[0.3em] max-md:mb-3 max-md:text-[2.6vw]" style={{ color: textColor, opacity: 0.6 }}>
-            Aktuell online
-          </p>
           <h2
             className="w-full text-[4.5vw] font-normal leading-none! tracking-tight max-md:text-[10vw]"
             style={{ color: textColor }}
