@@ -218,6 +218,7 @@ export default function HalftoneWordmarkFooter({
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
+    const coarse = window.matchMedia("(pointer: coarse)").matches
     const reduced = respectReducedMotion && window.matchMedia("(prefers-reduced-motion: reduce)").matches
     let w = 0
     let h = 0
@@ -243,7 +244,7 @@ export default function HalftoneWordmarkFooter({
       const rect = root.getBoundingClientRect()
       w = Math.max(1, Math.round(rect.width))
       h = Math.max(1, Math.round(rect.height))
-      dpr = Math.min(window.devicePixelRatio || 1, 2)
+      dpr = Math.min(window.devicePixelRatio || 1, coarse ? 1.5 : 2)
       canvas.width = Math.round(w * dpr)
       canvas.height = Math.round(h * dpr)
 
@@ -379,7 +380,7 @@ export default function HalftoneWordmarkFooter({
         ctx.fill()
       }
 
-      if (grainTile && o.grain > 0) {
+      if (grainTile && o.grain > 0 && !coarse) {
         ctx.globalAlpha = Math.min(1, o.grain) * 0.09
         ctx.globalCompositeOperation = "overlay"
         const pattern = ctx.createPattern(grainTile, "repeat")

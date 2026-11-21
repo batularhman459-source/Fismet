@@ -13,6 +13,8 @@ import { Component as KineticNavigation } from "@/components/ui/sterling-gate-ki
 import { setScrollLocked } from "@/lib/scroll-lock";
 
 const EASE = [0.76, 0, 0.24, 1] as const;
+// Handy/Tablet: teure Effekte (Blur) weglassen
+const IS_TOUCH = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
 const LOGO_MARK = `${import.meta.env.BASE_URL}fismet-mark.png`;
 const LOGO_MARK_HD = `${import.meta.env.BASE_URL}fismet-mark-hd.png`;
 const HERO_FRONT = `${import.meta.env.BASE_URL}hero-front.webp`;
@@ -80,8 +82,19 @@ export default function App() {
       </AnimatePresence>
 
       <motion.div
-        initial={{ scale: 1.08, filter: "blur(12px)" }}
-        animate={loading ? {} : { scale: 1, filter: "blur(0px)" }}
+        initial={IS_TOUCH ? { scale: 1.05, opacity: 0.6 } : { scale: 1.08, filter: "blur(12px)" }}
+        animate={loading ? {} : IS_TOUCH ? { scale: 1, opacity: 1 } : { scale: 1, filter: "blur(0px)" }}
+        // Filter/Transform nach dem Übergang entfernen, damit nichts dauerhaft neu gerechnet wird
+        onAnimationComplete={(def) => {
+          if (!loading && def && typeof def === "object") {
+            const el = document.getElementById("hero-wrap");
+            if (el) {
+              el.style.filter = "none";
+              el.style.transform = "none";
+            }
+          }
+        }}
+        id="hero-wrap"
         transition={{ duration: 1.2, ease: EASE }}
       >
         {/* Vordere Ebene lokal, ohne die Person */}

@@ -951,7 +951,8 @@ function startEngine(
       }
     }
     if (dirty && logo && renderer && !lost) {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      // Handys: max. 1,5x – der Glas-Shader ist pro Pixel teuer
+      const dpr = Math.min(window.devicePixelRatio || 1, window.matchMedia("(pointer: coarse)").matches ? 1.5 : 2)
       const cw = canvas.clientWidth
       const ch = canvas.clientHeight
       const w = Math.max(1, Math.round(cw * dpr))

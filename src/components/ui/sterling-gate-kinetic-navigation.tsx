@@ -56,6 +56,14 @@ const NAV_CSS = `
 }
 /* Menü-Button rechts: mix-blend-difference hält ihn auf hellen und dunklen Sektionen lesbar */
 .sg-nav .menu-layer { z-index: 61; mix-blend-mode: difference; left: auto; }
+/* Handy: mix-blend zwingt den Browser, bei jedem Scroll-Frame alles neu zu mischen -> dunkle Kapsel statt Blend */
+@media (pointer: coarse) {
+  .sg-nav .menu-layer { mix-blend-mode: normal; }
+  .sg-nav .menu-layer .nav-close-btn {
+    background: rgba(11, 11, 10, .72); border: 1px solid rgba(225, 224, 204, .1);
+    border-radius: 999px; padding: .45rem .85rem;
+  }
+}
 /* Logo links: eigene Ebene ohne Blend, damit die Logo-Farben echt bleiben */
 .sg-nav .logo-layer { right: auto; }
 .sg-nav .site-header-wrapper[data-hidden="true"] { opacity: 0; transform: translateY(-100%); }

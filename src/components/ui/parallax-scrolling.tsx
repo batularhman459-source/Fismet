@@ -41,6 +41,7 @@ const PARALLAX_CSS = `
 .parallax__layer-img {
   pointer-events: none; position: absolute; top: -17.5%; left: 0;
   width: 100%; max-width: none; height: 117.5%; object-fit: cover;
+  will-change: transform;
 }
 .parallax__layer-title {
   position: absolute; top: 0; left: 0; width: 100%; height: 100svh;
