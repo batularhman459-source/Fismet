@@ -68,10 +68,10 @@ export function ContactSection({ id = "kontakt" }: { id?: string }) {
   return (
     <section id={id} className="px-4 py-24 sm:px-6 md:px-10 md:py-32">
       <SectionHead title="Lass uns über euer Projekt reden." muted="In zwei Minuten zur Anfrage." />
-      <div className="grid gap-10 lg:grid-cols-12">
-        {/* Desktop: oben bündig mit der Formular-Karte (unter den Fortschrittspunkten) */}
-        <Reveal className="lg:col-span-4 lg:pt-[84px]">
-          <div className="flex flex-col gap-4">
+      <div className="grid gap-10 lg:grid-cols-12" style={{ ["--form-head" as string]: "84px", ["--form-foot" as string]: "36px" }}>
+        {/* Desktop: oben und unten bündig mit der Formular-Karte (Fortschritt oben, Schritt-Anzeige unten ausgenommen) */}
+        <Reveal className="lg:col-span-4 lg:pb-[var(--form-foot)] lg:pt-[var(--form-head)]">
+          <div className="flex h-full flex-col gap-4">
             {[
               { icon: Mail, label: "E-Mail", value: CONTACT.email, href: `mailto:${CONTACT.email}` },
               { icon: Phone, label: "Telefon", value: CONTACT.phone, href: `tel:${CONTACT.phone.replace(/\s/g, "")}` },
@@ -89,16 +89,16 @@ export function ContactSection({ id = "kontakt" }: { id?: string }) {
                 </>
               );
               return href ? (
-                <a key={label} href={href} className="flex items-center gap-4 rounded-2xl border border-border p-4 transition-colors hover:border-accent/60">
+                <a key={label} href={href} className="flex items-center gap-4 rounded-2xl border border-border p-4 transition-colors hover:border-accent/60 lg:flex-1">
                   {inner}
                 </a>
               ) : (
-                <div key={label} className="flex items-center gap-4 rounded-2xl border border-border p-4">
+                <div key={label} className="flex items-center gap-4 rounded-2xl border border-border p-4 lg:flex-1">
                   {inner}
                 </div>
               );
             })}
-            <p className="mt-2 text-sm leading-relaxed text-primary/45">
+            <p className="mt-2 text-sm leading-relaxed text-primary/45 lg:mt-1">
               Lieber direkt schreiben? Kein Problem, eine kurze Mail mit ein paar Infos zum Projekt reicht völlig.
             </p>
           </div>
